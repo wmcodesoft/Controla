@@ -1,0 +1,95 @@
+<?php
+namespace App\Http\Controllers\Access;
+
+use App\Http\Controllers\Controller;
+use App\Models\Visitor;
+use App\Models\Vehicle;
+use Illuminate\Http\Request;
+
+class VisitorController extends Controller
+{
+    public function index()
+    {
+        $visitors = Visitor::latest()->paginate(15);
+        return view('modules.access.visitors.index', compact('visitors'));
+    }
+
+    public function create()
+    {
+        return view('modules.access.visitors.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'document_type' => 'required|in:CC,NIT,CE,Pasaporte',
+            'document_number' => 'required|string|max:50|unique:visitors,document_number,NULL,id,document_type,' . $request->document_type,
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:100',
+            'nationality' => 'nullable|string|max:50',
+            'company' => 'nullable|string|max:150',
+            'visitor_type' => 'required|in:persona,contratista,proveedor',
+            'birth_date' => 'nullable|date',
+            'notes' => 'nullable|string',
+        ]);
+
+        Visitor::create($validated);
+
+        return redirect()->route('access.visitors.index')
+            ->with('success', 'Visitante creado exitosamente.');
+    }
+
+    public function show(Visitor $visitor)
+    {
+        $visitor->load(['vehicles', 'accessLogs' => fn($q) => $q->latest()->take(20), 'documents']);
+        return view('modules.access.visitors.show', compact('visitor'));
+    }
+
+    public function edit(Visitor $visitor)
+    {
+        return view('modules.access.visitors.edit', compact('visitor'));
+    }
+
+    public function update(Request $request, Visitor $visitor)
+    {
+        $validated = $request->validate([
+            'document_type' => 'required|in:CC,NIT,CE,Pasaporte',
+            'document_number' => 'required|string|max:50|unique:visitors,document_number,' . $visitor->id . ',id,document_type,' . $request->document_type,
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:100',
+            'nationality' => 'nullable|string|max:50',
+            'company' => 'nullable|string|max:150',
+            'visitor_type' => 'required|in:persona,contratista,proveedor',
+            'birth_date' => 'nullable|date',
+            'notes' => 'nullable|string',
+        ]);
+
+        $visitor->update($validated);
+
+        return redirect()->route('access.visitors.index')
+            ->with('success', 'Visitante actualizado exitosamente.');
+    }
+
+    public function destroy(Visitor $visitor)
+    {
+        $visitor->delete();
+        return redirect()->route('access.visitors.index')
+            ->with('success', 'Visitante eliminado exitosamente.');
+    }
+
+    public function searchJson(Request $request)
+    {
+        $query = $request->get('q');
+        $visitors = Visitor::where('document_number', 'like', "%{$query}%")
+            ->orWhere('first_name', 'like', "%{$query}%")
+            ->orWhere('last_name', 'like', "%{$query}%")
+            ->take(10)
+            ->get(['id', 'document_type', 'document_number', 'first_name', 'last_name', 'company']);
+
+        return response()->json($visitors);
+    }
+}

@@ -1,0 +1,60 @@
+<?php
+return [
+    'permissions' => [
+        'access.dashboard',
+        'access.manage.visitors',
+        'access.manage.vehicles',
+        'access.manage.vehicle_access',
+        'access.register.entry',
+        'access.register.exit',
+        'access.manage.pre_authorizations',
+        'access.manage.correspondence',
+        'access.manage.guard_logs',
+        'access.manage.locations',
+        'access.manage.buildings',
+        'access.manage.housing_units',
+        'access.manage.residents',
+        'access.view.reports',
+    ],
+    'roles' => [
+        'super-admin' => [],
+        'admin-accesos' => [
+            'access.dashboard', 'access.manage.locations',
+            'access.manage.buildings', 'access.manage.housing_units', 'access.manage.residents',
+            'access.manage.visitors', 'access.manage.vehicles', 'access.manage.vehicle_access',
+            'access.register.entry', 'access.register.exit',
+            'access.manage.pre_authorizations', 'access.manage.correspondence',
+            'access.manage.guard_logs', 'access.view.reports',
+        ],
+        'guardia' => [
+            'access.dashboard', 'access.register.entry', 'access.register.exit',
+            'access.manage.visitors', 'access.manage.vehicles', 'access.manage.vehicle_access',
+            'access.manage.residents',
+            'access.manage.correspondence', 'access.manage.guard_logs',
+        ],
+        'anfitrion' => [
+            'access.dashboard', 'access.manage.pre_authorizations',
+        ],
+    ],
+    'navigation' => [
+        'access' => [
+            'label' => 'Control Acceso',
+            'permission' => 'access.dashboard',
+            'items' => [
+                ['label' => 'Dashboard', 'route' => 'access.dashboard', 'permission' => 'access.dashboard'],
+                ['label' => 'Ingreso/Salida', 'route' => 'access.logs.index', 'permission' => 'access.register.entry'],
+                ['label' => 'Visitantes', 'route' => 'access.visitors.index', 'permission' => 'access.manage.visitors'],
+                ['label' => 'Residentes', 'route' => 'access.residents.index', 'permission' => 'access.manage.residents'],
+                ['label' => 'Apartamentos', 'route' => 'access.housing_units.index', 'permission' => 'access.manage.housing_units'],
+                ['label' => 'Torres/Bloques', 'route' => 'access.buildings.index', 'permission' => 'access.manage.buildings'],
+                ['label' => 'Vehículos', 'route' => 'access.vehicles.index', 'permission' => 'access.manage.vehicles'],
+                ['label' => 'Control Vehicular', 'route' => 'access.vehicle_access.index', 'permission' => 'access.manage.vehicle_access'],
+                ['label' => 'Pre-Autorizaciones', 'route' => 'access.pre_authorizations.index', 'permission' => 'access.manage.pre_authorizations'],
+                ['label' => 'Correspondencia', 'route' => 'access.correspondence.index', 'permission' => 'access.manage.correspondence'],
+                ['label' => 'Minutas', 'route' => 'access.guard_logs.index', 'permission' => 'access.manage.guard_logs'],
+                ['label' => 'Ubicaciones', 'route' => 'access.locations.index', 'permission' => 'access.manage.locations'],
+                ['label' => 'Reportes', 'route' => 'access.reports.index', 'permission' => 'access.view.reports'],
+            ],
+        ],
+    ],
+];

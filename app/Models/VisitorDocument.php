@@ -1,0 +1,17 @@
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class VisitorDocument extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['visitor_id', 'type', 'file_path', 'notes'];
+
+    public function visitor()
+    {
+        return $this->belongsTo(Visitor::class);
+    }
+}
