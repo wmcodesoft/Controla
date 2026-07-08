@@ -85,6 +85,18 @@ npm install && npm run build
 
 **Datos piloto:** empresa SJ Seguridad, clientes *Palmas del Ingenio* y *Torres de la Loma*, Torre A + 10 apartamentos, 20 personas en censo.
 
+Los usuarios demo se crean en `DemoUsersSeeder` (idempotente con `updateOrCreate`). Orden de ejecución en `DatabaseSeeder`:
+
+1. `RoleAndPermissionSeeder` — roles y permisos Spatie
+2. `LocationSeeder` — ubicaciones base
+3. `TenantSeeder` — empresa + clientes piloto
+4. `DemoUsersSeeder` — **todos** los usuarios demo (plataforma, empresa, cliente, portería, residente)
+5. `StructureSeeder` — árbol residencial y censo piloto
+
+```bash
+php artisan db:seed --class=DemoUsersSeeder   # solo usuarios demo
+```
+
 ---
 
 ## Fase 0 — Multi-tenant (implementado)
@@ -167,6 +179,14 @@ Dashboard operativo con KPIs (personas dentro, visitantes, correspondencia pendi
 
 ## Tests
 
+Los tests usan una **base de datos aislada** (`controla_test`), configurada en `phpunit.xml`. No tocan la BD de desarrollo (`controla` en `.env`).
+
+Crear la BD de test una sola vez (Laragon / MySQL):
+
+```sql
+CREATE DATABASE IF NOT EXISTS controla_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
 ```bash
 php artisan test
 ```
@@ -178,7 +198,7 @@ Suites relevantes:
 - `tests/Feature/Platform/PlatformDashboardTest.php`
 - `tests/Feature/Auth/LoginCsrfTest.php`
 
-> Los tests usan `RefreshDatabase` en el entorno `testing` de PHPUnit — **no afecta** la BD de desarrollo configurada en `.env`.
+> Los tests usan `RefreshDatabase` y **recrean** `controla_test` en cada ejecución. Nunca ejecutar la suite completa contra la BD de desarrollo.
 
 ---
 
@@ -215,13 +235,23 @@ resources/views/modules/
 ## Comandos útiles
 
 ```bash
-php artisan migrate                    # aplicar migraciones nuevas
-php artisan db:seed                    # datos demo (aditivo)
-php artisan db:seed --class=TenantSeeder
+php artisan migrate                         # aplicar migraciones nuevas
+php artisan db:seed                         # datos demo (aditivo, todos los seeders)
+php artisan db:seed --class=DemoUsersSeeder # solo usuarios demo
+php artisan db:seed --class=TenantSeeder    # solo empresa y clientes
 php artisan config:clear
-php artisan test
-npm run dev                            # Vite en desarrollo
+php artisan test                            # usa controla_test, no controla
+npm run dev                                 # Vite en desarrollo
 ```
+
+### Seguridad de base de datos
+
+**Prohibido** en BD de desarrollo sin autorización explícita:
+
+- `migrate:fresh`, `migrate:refresh`, `db:wipe`
+- Ejecutar `php artisan test` sin `controla_test` configurada en `phpunit.xml`
+
+Regla del proyecto para el agente IA: `.cursor/rules/database-safety.mdc`
 
 ---
 

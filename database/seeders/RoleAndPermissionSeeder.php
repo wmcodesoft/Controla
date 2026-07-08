@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -28,38 +27,5 @@ final class RoleAndPermissionSeeder extends Seeder
 
         $superAdmin = Role::findByName('super-admin');
         $superAdmin->syncPermissions(Permission::all());
-
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@control-acceso.test'],
-            [
-                'name' => 'Súper Administrador',
-                'password' => bcrypt('Admin123!'),
-                'email_verified_at' => now(),
-                'is_active' => true,
-            ]
-        );
-        $admin->assignRole('super-admin');
-
-        $guardia = User::firstOrCreate(
-            ['email' => 'guardia@control-acceso.test'],
-            [
-                'name' => 'Guardia Portero',
-                'password' => bcrypt('Guardia123!'),
-                'email_verified_at' => now(),
-                'is_active' => true,
-            ]
-        );
-        $guardia->assignRole('guardia');
-
-        $anfitrion = User::firstOrCreate(
-            ['email' => 'anfitrion@control-acceso.test'],
-            [
-                'name' => 'Residente Ejemplo',
-                'password' => bcrypt('Anfitrion123!'),
-                'email_verified_at' => now(),
-                'is_active' => true,
-            ]
-        );
-        $anfitrion->assignRole('resident');
     }
 }

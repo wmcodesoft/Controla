@@ -8,7 +8,6 @@ use App\Enums\ClientPlanTier;
 use App\Models\AccessLog;
 use App\Models\Building;
 use App\Models\Client;
-use App\Models\ClientUserAssignment;
 use App\Models\Correspondence;
 use App\Models\GuardLog;
 use App\Models\HousingUnit;
@@ -16,7 +15,6 @@ use App\Models\Location;
 use App\Models\PreAuthorization;
 use App\Models\Resident;
 use App\Models\SecurityCompany;
-use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\Visitor;
 use Illuminate\Database\Seeder;
@@ -62,44 +60,6 @@ final class TenantSeeder extends Seeder
         );
 
         $this->backfillOperationalData($palmas->id);
-
-        $companyAdmin = User::query()->firstOrCreate(
-            ['email' => 'empresa@sj-seguridad.test'],
-            [
-                'name' => 'Admin Empresa SJ',
-                'password' => bcrypt('Empresa123!'),
-                'email_verified_at' => now(),
-                'is_active' => true,
-                'security_company_id' => $company->id,
-            ]
-        );
-        $companyAdmin->syncRoles(['company-admin']);
-
-        $clientAdmin = User::query()->firstOrCreate(
-            ['email' => 'admin@palmasdelingenio.test'],
-            [
-                'name' => 'Admin Cliente Palmas',
-                'password' => bcrypt('Cliente123!'),
-                'email_verified_at' => now(),
-                'is_active' => true,
-                'primary_client_id' => $palmas->id,
-            ]
-        );
-        $clientAdmin->syncRoles(['client-admin']);
-        $this->assignClient($clientAdmin, $palmas, true);
-
-        $guardia = User::query()->where('email', 'guardia@control-acceso.test')->first();
-        if ($guardia) {
-            $guardia->update(['primary_client_id' => $palmas->id]);
-            $guardia->syncRoles(['guardia']);
-            $this->assignClient($guardia, $palmas, true);
-        }
-
-        $legacyAdmin = User::query()->where('email', 'admin@control-acceso.test')->first();
-        if ($legacyAdmin) {
-            $legacyAdmin->update(['primary_client_id' => $palmas->id]);
-            $this->assignClient($legacyAdmin, $palmas, true);
-        }
     }
 
     private function backfillOperationalData(int $clientId): void
@@ -121,18 +81,6 @@ final class TenantSeeder extends Seeder
             DB::table((new $modelClass)->getTable())
                 ->whereNull('client_id')
                 ->update(['client_id' => $clientId]);
-        }
-    }
-
-    private function assignClient(User $user, Client $client, bool $primary = false): void
-    {
-        ClientUserAssignment::query()->firstOrCreate(
-            ['user_id' => $user->id, 'client_id' => $client->id],
-            ['is_primary' => $primary, 'assigned_at' => now()]
-        );
-
-        if ($primary) {
-            $user->update(['primary_client_id' => $client->id]);
         }
     }
 }
