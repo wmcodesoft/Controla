@@ -14,6 +14,7 @@ Plataforma SaaS B2B de **control de accesos y vigilancia** para empresas de segu
 | **1** | Estructura / censo | ✅ Implementada |
 | **Limpieza** | Panel plataforma + residuos Breeze | ✅ Implementada |
 | **Landing** | Vista pública `/` (welcome) | ✅ Implementada |
+| **Auth** | Login `/login` (AuthLayout) | ✅ Implementada |
 | **2** | Operación portería (MVP) | ⏳ Pendiente |
 | **3** | BI + vigilancia | ⏳ Pendiente |
 
@@ -134,6 +135,24 @@ Diseño: una pantalla sin scroll (`h-screen`), hero 40/60 (texto / imagen), 3 ca
 
 ---
 
+## Login (`/login`)
+
+Vista de autenticación con layout dedicado `AuthLayout` (`resources/views/layouts/auth.blade.php`).
+
+| Elemento | Detalle |
+|----------|---------|
+| Fondo | `hero-background.png` con opacidad reducida + overlay oscuro |
+| Formulario | Card glass centrado, tema cyan/slate |
+| Textos | Español (B2B, sin registro público) |
+| Logo | `logo-controla.png` sobre el formulario |
+| Volver | Enlace a `/` |
+
+Componente: `app/View/Components/AuthLayout.php` · Vista: `resources/views/auth/login.blade.php`
+
+Otras rutas auth (recuperar contraseña, etc.) siguen usando `GuestLayout` de Breeze hasta migrarlas.
+
+---
+
 ## Fase 0 — Multi-tenant (implementado)
 
 ### Base de datos
@@ -250,6 +269,7 @@ app/
 ├── Repositories/
 ├── Services/Structure|Tenant|Auth/
 ├── Policies/
+├── View/Components/AuthLayout.php
 └── Support/Tenancy/
 
 routes/modules/
@@ -258,11 +278,17 @@ routes/modules/
 ├── client.php
 └── access.php
 
-resources/views/modules/
-├── admin/
-├── company/
-├── client/
-└── access/
+resources/views/
+├── layouts/
+│   ├── auth.blade.php           # Login Controla
+│   └── guest.blade.php          # Breeze (otras rutas auth)
+├── auth/
+│   └── login.blade.php
+└── modules/
+    ├── admin/
+    ├── company/
+    ├── client/
+    └── access/
 ```
 
 ---
