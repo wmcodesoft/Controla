@@ -6,6 +6,7 @@ use App\Http\Controllers\Client\AppUserController;
 use App\Http\Controllers\Client\AuthorizationController;
 use App\Http\Controllers\Client\DashboardController;
 use App\Http\Controllers\Client\MemberController;
+use App\Http\Controllers\Client\PetController;
 use App\Http\Controllers\Client\StructureController;
 use App\Http\Controllers\Client\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -66,6 +67,23 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access', 'clie
         Route::post('/authorizations/import', [AuthorizationController::class, 'import'])
             ->middleware('permission:client.authorizations.manage')
             ->name('authorizations.import.store');
+
+        Route::get('/pets', [PetController::class, 'index'])
+            ->middleware('permission:client.pets.manage')
+            ->name('pets.index');
+        Route::get('/pets/create', [PetController::class, 'create'])
+            ->middleware('permission:client.pets.manage')
+            ->name('pets.create');
+        Route::post('/pets', [PetController::class, 'store'])
+            ->middleware('permission:client.pets.manage')
+            ->name('pets.store');
+        Route::get('/pets/{pet}', [PetController::class, 'show'])
+            ->middleware('permission:client.pets.manage')
+            ->name('pets.show');
+
+        Route::get('/members/export', [MemberController::class, 'export'])
+            ->middleware('permission:client.members.manage')
+            ->name('members.export');
 
         Route::get('/app-users', [AppUserController::class, 'index'])
             ->middleware('permission:client.app_users.manage')

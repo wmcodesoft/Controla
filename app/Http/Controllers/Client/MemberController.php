@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Domain\Structure\Data\CreateMemberData;
 use App\Enums\MemberType;
+use App\Exports\MembersAssemblyExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreMemberRequest;
 use App\Models\Structure;
@@ -16,6 +17,8 @@ use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 final class MemberController extends Controller
 {
@@ -81,5 +84,17 @@ final class MemberController extends Controller
         $member->load('structure');
 
         return view('modules.client.members.show', compact('member'));
+    }
+
+    public function export(): BinaryFileResponse
+    {
+        $this->authorize('viewAny', StructureMember::class);
+
+        $clientId = (int) $this->tenantContext->clientId();
+
+        return Excel::download(
+            new MembersAssemblyExport($clientId),
+            'listado-miembros-asamblea.xlsx',
+        );
     }
 }

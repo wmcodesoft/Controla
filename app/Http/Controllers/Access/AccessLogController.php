@@ -76,4 +76,17 @@ class AccessLogController extends Controller
         return redirect()->route('access.logs.index')
             ->with('success', 'Salida registrada exitosamente.');
     }
+
+    public function bulkExit(Request $request)
+    {
+        $count = AccessLog::where('status', 'active')
+            ->whereDate('entry_time', '<=', today())
+            ->update([
+                'exit_time' => now(),
+                'status' => 'completed',
+            ]);
+
+        return redirect()->route('access.logs.index')
+            ->with('success', "Salida masiva: {$count} registro(s) actualizado(s).");
+    }
 }

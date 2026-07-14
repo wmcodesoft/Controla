@@ -36,4 +36,7 @@ require __DIR__.'/modules/company.php';
 // Panel conjunto / censo (Fase 1)
 require __DIR__.'/modules/client.php';
 
+// Portal residente (Fase 4)
+require __DIR__.'/modules/resident.php';
+
 require __DIR__.'/auth.php';

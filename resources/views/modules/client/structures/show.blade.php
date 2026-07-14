@@ -49,5 +49,39 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="rounded-xl border border-slate-800 overflow-hidden">
+            <div class="px-4 py-3 bg-slate-950/60 border-b border-slate-800">
+                <h3 class="text-sm font-semibold text-white">Mascotas</h3>
+            </div>
+            <table class="min-w-full text-sm">
+                <thead class="bg-slate-950/30">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-semibold uppercase text-slate-500">Nombre</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold uppercase text-slate-500">Especie</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold uppercase text-slate-500">Raza</th>
+                        <th class="px-4 py-2 text-center text-xs font-semibold uppercase text-slate-500">Peligroso</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                    @forelse ($structure->pets as $pet)
+                        <tr>
+                            <td class="px-4 py-2 text-white">{{ $pet->name }}</td>
+                            <td class="px-4 py-2 text-slate-400">{{ $pet->species->label() }}</td>
+                            <td class="px-4 py-2 text-slate-400">{{ $pet->breed ?? '—' }}</td>
+                            <td class="px-4 py-2 text-center">
+                                @if($pet->is_potentially_dangerous)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900/50 text-red-300">Sí</span>
+                                @else
+                                    <span class="text-slate-600">—</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="4" class="px-4 py-6 text-slate-500">Sin mascotas registradas.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </x-client-layout>

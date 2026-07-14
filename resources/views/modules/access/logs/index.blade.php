@@ -6,8 +6,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @include('modules.access.partials.subnav')
 
-            <div class="mt-6 flex justify-end">
+            <div class="mt-6 flex justify-end gap-2">
                 <a href="{{ route('access.logs.entry') }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">Registrar Ingreso</a>
+                @if($activeLogs->count())
+                <form action="{{ route('access.logs.bulk-exit') }}" method="POST" onsubmit="return confirm('¿Marcar salida de todos los registros activos?')">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700">Salida Masiva</button>
+                </form>
+                @endif
             </div>
 
             @if(session('success'))

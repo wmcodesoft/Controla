@@ -5,9 +5,14 @@
                 <h2 class="text-2xl font-bold text-white">Directorio de personas</h2>
                 <p class="text-sm text-slate-400 mt-1">Censo global con filtros por unidad — §1.2.2.</p>
             </div>
-            <a href="{{ route('client.members.create') }}" class="inline-flex rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-500">
-                Nueva persona
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('client.members.export') }}" class="inline-flex rounded-lg bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600">
+                    Exportar
+                </a>
+                <a href="{{ route('client.members.create') }}" class="inline-flex rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-500">
+                    Nueva persona
+                </a>
+            </div>
         </div>
 
         <form method="GET" class="flex flex-wrap gap-3">

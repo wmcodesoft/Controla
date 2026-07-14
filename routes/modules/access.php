@@ -13,9 +13,14 @@ use App\Http\Controllers\Access\ReportController;
 use App\Http\Controllers\Access\BuildingController;
 use App\Http\Controllers\Access\HousingUnitController;
 use App\Http\Controllers\Access\ResidentController;
+use App\Http\Controllers\Access\OperationsController;
+use App\Http\Controllers\Access\BlocklistController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->prefix('access')->name('access.')->group(function () {
+    // Operations Hub
+    Route::get('/operations', [OperationsController::class, 'index'])->name('operations');
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -71,4 +76,15 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+
+    // Blocklist
+    Route::get('/blocklist', [BlocklistController::class, 'index'])->name('blocklist.index');
+    Route::get('/blocklist/create', [BlocklistController::class, 'create'])->name('blocklist.create');
+    Route::post('/blocklist', [BlocklistController::class, 'store'])->name('blocklist.store');
+    Route::get('/blocklist/search', [BlocklistController::class, 'searchJson'])->name('blocklist.search');
+    Route::delete('/blocklist/{blocklist}', [BlocklistController::class, 'destroy'])->name('blocklist.destroy');
+
+    // Bulk Exit
+    Route::post('/logs/bulk-exit', [AccessLogController::class, 'bulkExit'])->name('logs.bulk-exit');
 });

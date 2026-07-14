@@ -27,7 +27,7 @@ final class ResolveUserHomeRoute
         }
 
         if ($user->hasAnyRole(['resident', 'anfitrion'])) {
-            return route('access.pre_authorizations.index');
+            return route('resident.dashboard');
         }
 
         return route('profile.edit');

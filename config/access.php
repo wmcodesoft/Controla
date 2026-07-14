@@ -18,12 +18,15 @@ return [
         // Cliente / censo (fase 1+)
         'client.structures.manage',
         'client.members.manage',
+        'client.pets.manage',
         'client.vehicles.manage',
         'client.authorizations.manage',
         'client.app_users.manage',
 
         // Portería operativa
+        'access.operations',
         'access.dashboard',
+        'access.manage.blocklist',
         'access.manage.visitors',
         'access.manage.vehicles',
         'access.manage.vehicle_access',
@@ -54,6 +57,7 @@ return [
             'company.clients.view',
             'company.clients.manage',
             'company.users.assign',
+            'access.operations',
             'access.dashboard',
             'access.view.reports',
         ],
@@ -61,10 +65,13 @@ return [
         'client-admin' => [
             'client.structures.manage',
             'client.members.manage',
+            'client.pets.manage',
             'client.vehicles.manage',
             'client.authorizations.manage',
             'client.app_users.manage',
+            'access.operations',
             'access.dashboard',
+            'access.manage.blocklist',
             'access.manage.locations',
             'access.manage.buildings',
             'access.manage.housing_units',
@@ -81,7 +88,9 @@ return [
         ],
 
         'supervisor' => [
+            'access.operations',
             'access.dashboard',
+            'access.manage.blocklist',
             'access.register.entry',
             'access.register.exit',
             'access.manage.visitors',
@@ -94,7 +103,9 @@ return [
         ],
 
         'guardia' => [
+            'access.operations',
             'access.dashboard',
+            'access.manage.blocklist',
             'access.register.entry',
             'access.register.exit',
             'access.manage.visitors',
@@ -114,10 +125,13 @@ return [
         'admin-accesos' => [
             'client.structures.manage',
             'client.members.manage',
+            'client.pets.manage',
             'client.vehicles.manage',
             'client.authorizations.manage',
             'client.app_users.manage',
+            'access.operations',
             'access.dashboard',
+            'access.manage.blocklist',
             'access.manage.locations',
             'access.manage.buildings',
             'access.manage.housing_units',
@@ -159,6 +173,7 @@ return [
             'label' => 'Control Acceso',
             'permission' => 'access.dashboard',
             'items' => [
+                ['label' => 'Operaciones', 'route' => 'access.operations', 'permission' => 'access.dashboard'],
                 ['label' => 'Dashboard', 'route' => 'access.dashboard', 'permission' => 'access.dashboard'],
                 ['label' => 'Ingreso/Salida', 'route' => 'access.logs.index', 'permission' => 'access.register.entry'],
                 ['label' => 'Visitantes', 'route' => 'access.visitors.index', 'permission' => 'access.manage.visitors'],
@@ -171,6 +186,7 @@ return [
                 ['label' => 'Correspondencia', 'route' => 'access.correspondence.index', 'permission' => 'access.manage.correspondence'],
                 ['label' => 'Minutas', 'route' => 'access.guard_logs.index', 'permission' => 'access.manage.guard_logs'],
                 ['label' => 'Ubicaciones', 'route' => 'access.locations.index', 'permission' => 'access.manage.locations'],
+                ['label' => 'Lista Bloqueo', 'route' => 'access.blocklist.index', 'permission' => 'access.manage.blocklist'],
                 ['label' => 'Reportes', 'route' => 'access.reports.index', 'permission' => 'access.view.reports'],
             ],
         ],
@@ -182,6 +198,7 @@ return [
                 ['label' => 'Residencial', 'route' => 'client.structures.index', 'permission' => 'client.structures.manage'],
                 ['label' => 'Personas', 'route' => 'client.members.index', 'permission' => 'client.members.manage'],
                 ['label' => 'Vehículos', 'route' => 'client.vehicles.index', 'permission' => 'client.vehicles.manage'],
+                ['label' => 'Mascotas', 'route' => 'client.pets.index', 'permission' => 'client.pets.manage'],
                 ['label' => 'Autorizaciones', 'route' => 'client.authorizations.index', 'permission' => 'client.authorizations.manage'],
                 ['label' => 'Usuarios APP', 'route' => 'client.app-users.index', 'permission' => 'client.app_users.manage'],
             ],

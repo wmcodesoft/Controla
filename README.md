@@ -15,8 +15,9 @@ Plataforma SaaS B2B de **control de accesos y vigilancia** para empresas de segu
 | **Limpieza** | Panel plataforma + residuos Breeze | ✅ Implementada |
 | **Landing** | Vista pública `/` (welcome) | ✅ Implementada |
 | **Auth** | Login `/login` (AuthLayout) | ✅ Implementada |
-| **2** | Operación portería (MVP) | ⏳ Pendiente |
-| **3** | BI + vigilancia | ⏳ Pendiente |
+| **2** | Operación portería (MVP) — Hub operaciones, lista bloqueo, salida masiva | ✅ Implementada |
+| **3** | BI + vigilancia — Reportes mejorados con exportación | ✅ Implementada |
+| **4** | API REST (Sanctum) + Portal Residente web | ✅ Implementada |
 
 Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md)
 
@@ -28,8 +29,10 @@ Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-IN
 |-------|---------|---------|-------------|
 | **Plataforma** | `/admin` | `super-admin` | KPIs globales, empresas de seguridad |
 | **Empresa** | `/company` | `company-admin` | Cartera de clientes (conjuntos) |
-| **Conjunto** | `/client` | `client-admin` | Censo: estructuras, personas, vehículos, autorizaciones |
-| **Portería** | `/access` | `guardia`, `supervisor`, `client-admin` | Operación diaria (legacy + multi-tenant) |
+| **Conjunto** | `/client` | `client-admin` | Censo: estructuras, personas, vehículos, mascotas, autorizaciones |
+| **Portería** | `/access` | `guardia`, `supervisor`, `client-admin` | Operación diaria: hub operaciones, bloqueo, reportes |
+| **Residente** | `/resident` | `resident`, `anfitrion` | Portal web: pre-autorizaciones y correspondencia |
+| **API** | `/api` | Token-based | Sanctum: auth, pre-autorizaciones, correspondencia |
 
 Tras el login, cada rol es redirigido a su **home** vía `ResolveUserHomeRoute` → ruta `/home`.
 
@@ -101,8 +104,8 @@ Luego: `npm run build` o `npm run dev`.
 | Súper Admin | `admin@control-acceso.test` | `Admin123!` | `/admin/dashboard` |
 | Admin Empresa | `empresa@sj-seguridad.test` | `Empresa123!` | `/company/dashboard` |
 | Admin Cliente | `admin@palmasdelingenio.test` | `Cliente123!` | `/client/dashboard` |
-| Guardia | `guardia@control-acceso.test` | `Guardia123!` | `/access/dashboard` |
-| Residente | `anfitrion@control-acceso.test` | `Anfitrion123!` | pre-autorizaciones |
+| Guardia | `guardia@control-acceso.test` | `Guardia123!` | `/access/operations` |
+| Residente | `anfitrion@control-acceso.test` | `Anfitrion123!` | `/resident/dashboard` |
 
 **Datos piloto:** empresa SJ Seguridad, clientes *Palmas del Ingenio* y *Torres de la Loma*, Torre A + 10 apartamentos, 20 personas en censo.
 
@@ -199,12 +202,30 @@ Tablas relacionadas:
 | Ruta | Módulo |
 |------|--------|
 | `/client/dashboard` | Resumen unidades |
-| `/client/structures` | Árbol residencial + badges censo |
-| `/client/members` | Directorio personas + QR |
+| `/client/structures` | Árbol residencial + badges censo (incluye conteo de mascotas) |
+| `/client/members` | Directorio personas + QR + **Exportar listado asamblea** |
+| `/client/pets` | Directorio de mascotas por unidad |
 | `/client/vehicles` | Directorio vehicular |
 | `/client/authorizations` | Pre-autorizaciones |
 | `/client/authorizations/import` | Import Excel (`maatwebsite/excel`) |
 | `/client/app-users` | Usuarios APP móvil |
+
+### Mascotas (`/client/pets`) — CRUD completo
+
+- **Rutas**: `index`, `create`, `store`, `show` (sigue el patrón de Members)
+- **Especies**: Perro, Gato, Ave, Otro/exótico (enum `PetSpecies`)
+- **Marcador de peligrosidad**: `is_potentially_dangerous` con badge rojo
+- **Filtros**: búsqueda por nombre/raza, filtro por unidad
+- **Vista de estructura**: lista de mascotas embebida en la vista `structures.show`
+
+### Exportar listado asamblea (`/client/members/export`)
+
+Descarga un archivo Excel con el censo completo de personas para juntas de propietarios:
+
+- **Clase**: `MembersAssemblyExport` (maatwebsite/excel)
+- **Columnas**: Nombre completo, Documento, Tipo (propietario/inquilino), Unidad, Teléfono, Email, Acceso APP
+- **Ordenado**: por apellido y nombre
+- Botón `Exportar` en la vista de directorio de personas
 
 ### Servicios clave
 
@@ -228,6 +249,41 @@ Tablas relacionadas:
 ## Módulo Portería (`/access`) — línea base
 
 Dashboard operativo con KPIs (personas dentro, visitantes, correspondencia pendiente, etc.). Sigue usando layout Breeze (`x-app-layout`) y modelos legacy (`buildings`, `housing_units`, `residents`) en paralelo al nuevo censo `structures`.
+
+### Fase 2 — Hub de Operaciones (`/access/operations`)
+
+**Centro de operaciones unificado** que reemplaza el dashboard como pantalla principal del guardia:
+
+- **Matriz 3×3 de acceso rápido**: Ingreso Peatonal, Ingreso Vehicular, Registrar Salida, Pre-Autorizaciones, Correspondencia, Minutas, Personas Dentro, Reportes, Búsqueda Rápida
+- Cada botón se muestra según los permisos del usuario
+- **Personas Dentro**: tabla en tiempo real con nombre, documento, tipo, destino, ubicación, tiempo transcurrido
+- **Alertas >12h**: las personas con más de 12 horas dentro se marcan en rojo con ícono de advertencia y un resumen de alerta al final
+- **Estadísticas rápidas**: dentro, hoy, correspondencia pendiente, pre-autorizaciones pendientes
+- **Salida directa**: botón "Salida" en cada fila que registra la salida con confirmación
+
+### Fase 2 — Lista de Bloqueo (`/access/blocklist`)
+
+Permite denegar acceso a personas o vehículos desde la portería:
+
+- **Tabla `blocklist`**: polimórfica (`blockable_type`/`blockable_id`) para visitantes, vehículos y residentes
+- **CRUD completo**: crear con búsqueda por tipo, listar activos, remover bloqueo
+- **Expiración opcional**: se puede establecer fecha de expiración del bloqueo
+- **Permiso**: `access.manage.blocklist` (asignado a guardia, supervisor, client-admin)
+
+### Fase 2 — Salida Masiva
+
+Botón `Salida Masiva` en la vista de Ingreso/Salida que marca como `completed` todos los registros activos del día:
+
+- Método `bulkExit()` en `AccessLogController`
+- Confirmación antes de ejecutar
+- Útil para cierre de turno o jornada
+
+### Fase 3 — Reportes Mejorados (`/access/reports`)
+
+- **Nuevos filtros**: tipo de acceso (visitante, vehicular, residente) además de fecha, estado y ubicación
+- **Exportación a Excel**: botón `Exportar Excel` que descarga los resultados filtrados como `.xlsx`
+- **Nuevas estadísticas**: total ingresos, dentro, hoy, visitantes, promedio de estadía
+- Clase `AccessLogsExport` con `FromQuery`, `WithMapping`, `WithHeadings`, `ShouldAutoSize`
 
 ---
 
@@ -258,37 +314,66 @@ Suites relevantes:
 
 ## Estructura de carpetas (nuevas)
 
+### Portal Residente (`/resident`) — Fase 4
+
+Panel web para residentes con pre-autorizaciones y seguimiento de correspondencia:
+
+| Ruta | Función |
+|------|---------|
+| `/resident/dashboard` | Resumen: pre-autorizaciones activas y correspondencia pendiente |
+| `/resident/pre-authorizations` | Listado y cancelación de pre-autorizaciones |
+| `/resident/pre-authorizations/create` | Crear nueva autorización de visita (nombre, documento, fecha, ubicación) |
+| `/resident/correspondence` | Historial de correspondencia recibida y entregada |
+| `/resident/correspondence/{id}` | Detalle de paquete o encomienda |
+
+- Layout dedicado: `layouts/resident.blade.php` (tema oscuro, navegación propia)
+- Componente Blade: `ResidentLayout`
+- Roles: `resident`, `anfitrion`
+- Redirección post-login: `ResolveUserHomeRoute` → `/resident/dashboard`
+
+## API REST (`/api`) — Sanctum
+
+API autenticada con tokens Laravel Sanctum para consumo desde app móvil futura.
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/auth/login` | POST | Login con email+password, devuelve token |
+| `/api/auth/me` | GET | Datos del usuario autenticado |
+| `/api/auth/logout` | POST | Revoca token actual |
+| `/api/pre-authorizations` | GET | Lista de pre-autorizaciones del usuario |
+| `/api/pre-authorizations` | POST | Crear pre-autorización |
+| `/api/pre-authorizations/{id}` | GET | Detalle de pre-autorización |
+| `/api/pre-authorizations/{id}` | DELETE | Cancelar pre-autorización |
+| `/api/correspondence` | GET | Lista de correspondencia del usuario |
+| `/api/correspondence/{id}` | GET | Detalle de correspondencia |
+| `/api/visitors/search` | GET | Buscar visitantes por nombre/documento |
+
 ```
 app/
 ├── Domain/Structure|Tenant/     # DTOs
-├── Enums/                       # StructureType, MemberType, etc.
+├── Enums/                       # StructureType, MemberType, PetSpecies, etc.
+├── Exports/                     # AccessLogsExport, MembersAssemblyExport
 ├── Http/Controllers/
+│   ├── Api/                     # Sanctum API (auth, pre-auth, correspondence)
 │   ├── Platform/                # Súper Admin
 │   ├── Company/                 # Admin Empresa
-│   └── Client/                  # Admin Cliente
-├── Repositories/
+│   ├── Client/                  # Admin Cliente (incluye PetController)
+│   ├── Resident/                # Portal Residente
+│   └── Access/                  # Portería (incluye OperationsController, BlocklistController)
+├── Repositories/                # StructurePetRepository, etc.
 ├── Services/Structure|Tenant|Auth/
-├── Policies/
-├── View/Components/AuthLayout.php
+├── Policies/                    # StructurePetPolicy
+├── View/Components/AuthLayout.php, ResidentLayout.php
 └── Support/Tenancy/
 
 routes/modules/
 ├── admin.php
 ├── company.php
 ├── client.php
-└── access.php
+├── access.php
+└── resident.php
 
-resources/views/
-├── layouts/
-│   ├── auth.blade.php           # Login Controla
-│   └── guest.blade.php          # Breeze (otras rutas auth)
-├── auth/
-│   └── login.blade.php
-└── modules/
-    ├── admin/
-    ├── company/
-    ├── client/
-    └── access/
+routes/api.php                   # Sanctum endpoints
 ```
 
 ---
@@ -298,10 +383,14 @@ resources/views/
 ```bash
 php artisan migrate                         # aplicar migraciones nuevas
 php artisan db:seed                         # datos demo (aditivo, todos los seeders)
+php artisan db:seed --class=RoleAndPermissionSeeder  # sincronizar permisos tras cambios en config/access.php
 php artisan db:seed --class=DemoUsersSeeder # solo usuarios demo
 php artisan db:seed --class=TenantSeeder    # solo empresa y clientes
 php artisan config:clear
+php artisan route:list --path=access        # ver rutas del módulo portería
+php artisan route:list --path=api           # ver rutas API
 php artisan test                            # usa controla_test, no controla
+npm run build                               # compilar assets Vite para producción
 npm run dev                                 # Vite en desarrollo
 ```
 
