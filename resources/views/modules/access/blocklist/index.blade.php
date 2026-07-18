@@ -1,53 +1,93 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Lista de Bloqueo</h2>
+        <div class="bg-gradient-to-r from-slate-800 to-indigo-900 -mx-4 -mt-4 px-4 pt-4 pb-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-indigo-300">Seguridad</p>
+                    <h2 class="text-xl font-bold text-white">Lista de Bloqueo</h2>
+                </div>
+                <a href="{{ route('access.blocklist.create') }}" class="inline-flex items-center px-3 py-1.5 bg-red-500 hover:bg-red-400 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm">
+                    <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                    Agregar a bloqueo
+                </a>
+            </div>
+        </div>
     </x-slot>
-    <div class="py-6">
+
+    <div class="-mt-4">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @include('modules.access.partials.subnav')
 
-            <div class="mt-6 flex justify-end">
-                <a href="{{ route('access.blocklist.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700">Agregar a bloqueo</a>
-            </div>
-
             @if(session('success'))
-                <div class="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">{{ session('success') }}</div>
+            <div class="mt-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                {{ session('success') }}
+            </div>
             @endif
 
-            <div class="mt-6 bg-white shadow rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Identificación</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Razón</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bloqueado por</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Desde</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expira</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse ($entries as $entry)
+            <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-lg font-semibold text-gray-900">Entradas Bloqueadas</h3>
+                    <p class="text-sm text-gray-500 mt-0.5">Personas y vehículos con ingreso denegado al conjunto</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $entry->blockable_type }}</td>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Identificación</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Razón</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Bloqueado por</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Desde</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Expira</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @forelse ($entries as $entry)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        @if(str_contains($entry->blockable_type, 'Visitor')) bg-blue-50 text-blue-700 ring-1 ring-blue-600/20
+                                        @elseif(str_contains($entry->blockable_type, 'Vehicle')) bg-cyan-50 text-cyan-700 ring-1 ring-cyan-600/20
+                                        @else bg-gray-50 text-gray-700 ring-1 ring-gray-600/20 @endif">
+                                        @if(str_contains($entry->blockable_type, 'Visitor')) Visitante
+                                        @elseif(str_contains($entry->blockable_type, 'Vehicle')) Vehículo
+                                        @else {{ class_basename($entry->blockable_type) }}
+                                        @endif
+                                    </span>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ $entry->blockable_id }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ $entry->reason }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $entry->blocker?->name ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $entry->blocked_at->format('d/m/Y H:i') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $entry->expires_at?->format('d/m/Y H:i') ?? '—' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">{{ $entry->reason }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $entry->blocker?->name ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $entry->blocked_at->format('d/m/Y H:i') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm {{ $entry->expires_at && $entry->expires_at->isPast() ? 'text-red-600 font-semibold' : 'text-gray-600' }}">
+                                    {{ $entry->expires_at?->format('d/m/Y H:i') ?? '—' }}
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                                     <form action="{{ route('access.blocklist.destroy', $entry) }}" method="POST" onsubmit="return confirm('¿Remover este bloqueo?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Remover</button>
+                                        <button type="submit" class="inline-flex items-center px-2.5 py-1 bg-emerald-600 border border-transparent rounded-lg font-semibold text-xs text-white hover:bg-emerald-700 transition-colors shadow-sm">
+                                            <svg class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"/></svg>
+                                            Remover
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
-                        @empty
-                            <tr><td colspan="7" class="px-6 py-10 text-center text-sm text-gray-500">No hay entradas bloqueadas.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center">
+                                    <svg class="mx-auto h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <p class="mt-2 text-sm text-gray-500">No hay entradas bloqueadas.</p>
+                                    <a href="{{ route('access.blocklist.create') }}" class="mt-3 inline-flex items-center px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors">
+                                        Agregar a lista de bloqueo
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
             {{ $entries->links() }}
         </div>

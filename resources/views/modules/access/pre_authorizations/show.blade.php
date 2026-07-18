@@ -1,27 +1,91 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Pre-Autorización</h2>
+        <div class="bg-gradient-to-r from-slate-800 to-indigo-900 -mx-4 -mt-4 px-4 pt-4 pb-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-indigo-300">Pre-Autorizaciones</p>
+                    <h2 class="text-xl font-bold text-white">Detalle de Autorización</h2>
+                </div>
+                <a href="{{ route('access.pre_authorizations.index') }}" class="text-sm text-indigo-300 hover:text-white transition-colors">← Volver</a>
+            </div>
+        </div>
     </x-slot>
-    <div class="py-6">
+
+    <div class="-mt-4">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white shadow rounded-lg p-6">
-                <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><dt class="text-sm font-medium text-gray-500">Visitante</dt><dd class="mt-1 text-sm text-gray-900">{{ $preAuthorization->visitor->full_name }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Documento</dt><dd class="mt-1 text-sm text-gray-900">{{ $preAuthorization->visitor->document_type }} {{ $preAuthorization->visitor->document_number }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Anfitrión</dt><dd class="mt-1 text-sm text-gray-900">{{ $preAuthorization->host->name }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Ubicación</dt><dd class="mt-1 text-sm text-gray-900">{{ $preAuthorization->location->name }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Fecha</dt><dd class="mt-1 text-sm text-gray-900">{{ $preAuthorization->scheduled_date->format('d/m/Y') }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Estado</dt><dd class="mt-1 text-sm"><span class="px-2 py-1 text-xs rounded-full @if($preAuthorization->status == 'pending') bg-yellow-100 text-yellow-800 @elseif($preAuthorization->status == 'used') bg-blue-100 text-blue-800 @else bg-gray-100 @endif">{{ $preAuthorization->status }}</span></dd></div>
-                </dl>
-                @if($preAuthorization->notes)
-                <div class="mt-4"><dt class="text-sm font-medium text-gray-500">Notas</dt><dd class="mt-1 text-sm text-gray-900">{{ $preAuthorization->notes }}</dd></div>
-                @endif
-                <div class="mt-6 p-4 bg-gray-50 rounded-md">
-                    <p class="text-sm font-medium text-gray-700 mb-2">Código QR:</p>
-                    <div class="flex items-center space-x-2">
-                        <code class="text-sm bg-white px-3 py-2 rounded border">{{ $preAuthorization->qr_code }}</code>
-                        <button onclick="navigator.clipboard.writeText('{{ $preAuthorization->qr_code }}')" class="text-xs text-indigo-600 hover:text-indigo-900">Copiar</button>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-5">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white text-lg font-bold">
+                            {{ strtoupper(substr($preAuthorization->visitor->full_name, 0, 2)) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{ $preAuthorization->visitor->full_name }}</p>
+                            <p class="text-xs text-gray-500">{{ $preAuthorization->visitor->document_type }} {{ $preAuthorization->visitor->document_number }}</p>
+                        </div>
+                        <span class="ml-auto inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ring-1
+                            @if($preAuthorization->status == 'pending') bg-amber-50 text-amber-700 ring-amber-600/20
+                            @elseif($preAuthorization->status == 'used') bg-blue-50 text-blue-700 ring-blue-600/20
+                            @elseif($preAuthorization->status == 'cancelled') bg-red-50 text-red-700 ring-red-600/20
+                            @else bg-gray-50 text-gray-700 ring-gray-600/20 @endif">
+                            {{ ucfirst($preAuthorization->status) }}
+                        </span>
                     </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Anfitrión</p>
+                            <p class="mt-1 text-sm font-semibold text-gray-900">{{ $preAuthorization->host->name }}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Ubicación</p>
+                            <p class="mt-1 text-sm font-semibold text-gray-900">{{ $preAuthorization->location->name }}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</p>
+                            <p class="mt-1 text-sm font-semibold text-gray-900">{{ $preAuthorization->scheduled_date->format('d/m/Y') }}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</p>
+                            <p class="mt-1 text-sm font-semibold text-gray-900">{{ ucfirst($preAuthorization->status) }}</p>
+                        </div>
+                    </div>
+
+                    @if($preAuthorization->notes)
+                    <div class="mt-4">
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Notas</p>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-sm text-gray-900">{{ $preAuthorization->notes }}</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="mt-6 bg-purple-50 border border-purple-200 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-sm font-semibold text-purple-800">Código QR de Autorización</p>
+                            <span class="text-xs text-purple-600">Presente este código en la portería</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 bg-white border border-purple-200 rounded-lg px-4 py-3">
+                                <code class="text-sm font-mono text-purple-900 break-all">{{ $preAuthorization->qr_code }}</code>
+                            </div>
+                            <button onclick="navigator.clipboard.writeText('{{ $preAuthorization->qr_code }}')" class="inline-flex items-center px-3 py-2 bg-purple-600 border border-transparent rounded-lg font-semibold text-xs text-white hover:bg-purple-700 transition-colors shadow-sm whitespace-nowrap">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                Copiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
+                    @if($preAuthorization->status == 'pending')
+                    <form action="{{ route('access.pre_authorizations.destroy', $preAuthorization) }}" method="POST" onsubmit="return confirm('¿Cancelar esta pre-autorización?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white hover:bg-red-700 transition-colors shadow-sm">
+                            <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Cancelar Autorización
+                        </button>
+                    </form>
+                    @endif
                 </div>
             </div>
         </div>
