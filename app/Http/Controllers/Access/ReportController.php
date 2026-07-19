@@ -44,8 +44,35 @@ class ReportController extends Controller
 
         $locations = Location::where('is_active', true)->get();
 
+        // Chart data: daily entries for last 14 days
+        $dailyLabels = [];
+        $dailyData = [];
+        for ($i = 13; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dailyLabels[] = $date->format('d/m');
+            $dailyData[] = AccessLog::whereDate('entry_time', $date)->count();
+        }
+
+        // Chart data: top locations
+        $topLocations = AccessLog::selectRaw('location_id, COUNT(*) as total')
+            ->groupBy('location_id')
+            ->orderByDesc('total')
+            ->take(5)
+            ->get();
+        $locLabels = $topLocations->map(fn($l) => $l->location?->name ?? '?')->toArray();
+        $locData = $topLocations->pluck('total')->toArray();
+
+        // Chart data: access type distribution
+        $typeLabels = ['Visitante', 'Vehicular', 'Residente'];
+        $typeData = [
+            AccessLog::where('access_type', 'visitor')->count(),
+            AccessLog::where('access_type', 'visitor_vehicle')->count(),
+            AccessLog::whereIn('access_type', ['resident', 'resident_vehicle'])->count(),
+        ];
+
         return view('modules.access.reports.index', compact(
-            'logs', 'totalEntries', 'activeEntries', 'todayEntries', 'totalVisitors', 'avgDuration', 'locations'
+            'logs', 'totalEntries', 'activeEntries', 'todayEntries', 'totalVisitors', 'avgDuration', 'locations',
+            'dailyLabels', 'dailyData', 'locLabels', 'locData', 'typeLabels', 'typeData'
         ));
     }
 

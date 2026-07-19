@@ -140,6 +140,24 @@
                 </div>
             </div>
 
+            <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Accesos diarios (últimos 7 días)</h3>
+                    <p class="text-xs text-gray-500 mb-4">Movimientos de entrada registrados por día</p>
+                    <canvas id="dailyChart" height="180"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Distribución por tipo</h3>
+                    <p class="text-xs text-gray-500 mb-4">Visitantes peatonales vs vehiculares vs residentes</p>
+                    <canvas id="typeChart" height="180"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 lg:col-span-2">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1">Actividad hoy por hora</h3>
+                    <p class="text-xs text-gray-500 mb-4">Distribución horaria de ingresos del día</p>
+                    <canvas id="hourlyChart" height="120"></canvas>
+                </div>
+            </div>
+
             <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100">
                     <div class="flex items-center justify-between">
@@ -209,4 +227,90 @@
             </div>
         </div>
     </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof Chart === 'undefined') return;
+
+    // Daily chart
+    const dailyCtx = document.getElementById('dailyChart');
+    if (dailyCtx) {
+        new Chart(dailyCtx, {
+            type: 'bar',
+            data: {
+                labels: @json($dailyLabels),
+                datasets: [{
+                    label: 'Ingresos',
+                    data: @json($dailyData),
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+    }
+
+    // Type chart
+    const typeCtx = document.getElementById('typeChart');
+    if (typeCtx) {
+        new Chart(typeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($typeLabels),
+                datasets: [{
+                    data: @json($typeData),
+                    backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(6, 182, 212, 0.8)', 'rgba(16, 185, 129, 0.8)'],
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } }
+            }
+        });
+    }
+
+    // Hourly chart
+    const hourlyCtx = document.getElementById('hourlyChart');
+    if (hourlyCtx) {
+        new Chart(hourlyCtx, {
+            type: 'line',
+            data: {
+                labels: @json($hourlyLabels),
+                datasets: [{
+                    label: 'Ingresos',
+                    data: @json($hourlyData),
+                    borderColor: 'rgba(139, 92, 246, 1)',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                    x: { ticks: { maxTicksLimit: 12 } }
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
+
 </x-app-layout>

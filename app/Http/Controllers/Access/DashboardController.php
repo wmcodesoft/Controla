@@ -31,10 +31,40 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
+        // Chart data: daily entries for last 7 days
+        $dailyLabels = [];
+        $dailyData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dailyLabels[] = $date->format('D');
+            $dailyData[] = AccessLog::whereDate('entry_time', $date)->count();
+        }
+
+        // Chart data: access type distribution
+        $typeLabels = ['Visitante', 'Vehicular', 'Residente'];
+        $typeData = [
+            AccessLog::where('access_type', 'visitor')->count(),
+            AccessLog::where('access_type', 'visitor_vehicle')->count(),
+            AccessLog::whereIn('access_type', ['resident', 'resident_vehicle'])->count(),
+        ];
+
+        // Chart data: hourly distribution for today
+        $hourlyLabels = [];
+        $hourlyData = [];
+        for ($h = 0; $h < 24; $h++) {
+            $hourlyLabels[] = str_pad($h, 2, '0', STR_PAD_LEFT) . ':00';
+            $hourlyData[] = AccessLog::whereDate('entry_time', today())
+                ->whereTime('entry_time', '>=', str_pad($h, 2, '0') . ':00:00')
+                ->whereTime('entry_time', '<', str_pad(($h + 1) % 24, 2, '0') . ':00:00')
+                ->count();
+        }
+
         return view('modules.access.dashboard', compact(
             'activeEntries', 'todayEntries', 'totalVisitors', 'totalResidents',
             'totalHousingUnits', 'totalBuildings',
-            'pendingCorrespondence', 'pendingPreAuthorizations', 'recentLogs'
+            'pendingCorrespondence', 'pendingPreAuthorizations', 'recentLogs',
+            'dailyLabels', 'dailyData', 'typeLabels', 'typeData',
+            'hourlyLabels', 'hourlyData'
         ));
     }
 }
