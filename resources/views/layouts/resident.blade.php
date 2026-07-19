@@ -40,6 +40,7 @@
                 <a href="{{ route('resident.dashboard') }}" class="{{ request()->routeIs('resident.dashboard') ? 'text-teal-400 border-b-2 border-teal-400' : 'text-slate-400 hover:text-white' }} pb-3 -mb-3">Resumen</a>
                 <a href="{{ route('resident.pre-authorizations.index') }}" class="{{ request()->routeIs('resident.pre-authorizations.*') ? 'text-teal-400 border-b-2 border-teal-400' : 'text-slate-400 hover:text-white' }} pb-3 -mb-3">Pre-Autorizaciones</a>
                 <a href="{{ route('resident.correspondence.index') }}" class="{{ request()->routeIs('resident.correspondence.*') ? 'text-teal-400 border-b-2 border-teal-400' : 'text-slate-400 hover:text-white' }} pb-3 -mb-3">Correspondencia</a>
+                <a href="{{ route('resident.messages.inbox') }}" class="{{ request()->routeIs('resident.messages.*') ? 'text-teal-400 border-b-2 border-teal-400' : 'text-slate-400 hover:text-white' }} pb-3 -mb-3">Mensajería</a>
             </nav>
 
             {{ $slot }}

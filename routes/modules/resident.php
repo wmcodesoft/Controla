@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Resident\CorrespondenceController;
 use App\Http\Controllers\Resident\DashboardController;
+use App\Http\Controllers\Resident\MessageController;
 use App\Http\Controllers\Resident\PreAuthorizationController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +33,15 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])
             ->name('correspondence.index');
         Route::get('/correspondence/{correspondence}', [CorrespondenceController::class, 'show'])
             ->name('correspondence.show');
+
+        Route::get('/messages', [MessageController::class, 'inbox'])
+            ->name('messages.inbox');
+        Route::get('/messages/sent', [MessageController::class, 'sent'])
+            ->name('messages.sent');
+        Route::get('/messages/create', [MessageController::class, 'create'])
+            ->name('messages.create');
+        Route::post('/messages', [MessageController::class, 'store'])
+            ->name('messages.store');
+        Route::get('/messages/{message}', [MessageController::class, 'show'])
+            ->name('messages.show');
     });
