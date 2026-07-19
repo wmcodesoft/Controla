@@ -1,58 +1,76 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $visitor->full_name }}</h2>
-    </x-slot>
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white shadow rounded-lg p-6">
-                <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><dt class="text-sm font-medium text-gray-500">Documento</dt><dd class="mt-1 text-sm text-gray-900">{{ $visitor->document_type }} {{ $visitor->document_number }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Teléfono</dt><dd class="mt-1 text-sm text-gray-900">{{ $visitor->phone ?? '-' }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Email</dt><dd class="mt-1 text-sm text-gray-900">{{ $visitor->email ?? '-' }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Empresa</dt><dd class="mt-1 text-sm text-gray-900">{{ $visitor->company ?? '-' }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Tipo</dt><dd class="mt-1 text-sm text-gray-900">{{ ucfirst($visitor->visitor_type) }}</dd></div>
-                    <div><dt class="text-sm font-medium text-gray-500">Nacionalidad</dt><dd class="mt-1 text-sm text-gray-900">{{ $visitor->nationality ?? '-' }}</dd></div>
-                </dl>
-            </div>
-
-            @if($visitor->vehicles->count())
-            <div class="mt-6 bg-white shadow rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Vehículos</h3>
-                <ul class="list-disc list-inside text-sm text-gray-600">
-                    @foreach($visitor->vehicles as $v)
-                    <li>{{ $v->plate }} - {{ $v->brand }} {{ $v->model }} ({{ $v->color }})</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <div class="mt-6 bg-white shadow rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Historial de Accesos</h3>
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ubicación</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ingreso</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Salida</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($visitor->accessLogs as $log)
-                        <tr>
-                            <td class="px-4 py-2 text-sm">{{ $log->entry_time->format('d/m/Y') }}</td>
-                            <td class="px-4 py-2 text-sm">{{ $log->location->name }}</td>
-                            <td class="px-4 py-2 text-sm">{{ $log->entry_time->format('H:i') }}</td>
-                            <td class="px-4 py-2 text-sm">{{ $log->exit_time?->format('H:i') ?? '-' }}</td>
-                            <td class="px-4 py-2"><span class="px-2 py-1 text-xs rounded-full {{ $log->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ $log->status == 'active' ? 'Dentro' : 'Salió' }}</span></td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="5" class="px-4 py-2 text-sm text-gray-500 text-center">Sin accesos registrados</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+<x-access-layout>
+    <div class="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-8 bg-gradient-to-r from-slate-800 to-indigo-900 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
+                <h2 class="text-xl font-bold text-white">{{ $visitor->full_name }}</h2>
             </div>
         </div>
     </div>
-</x-app-layout>
+
+    <div class="bg-slate-900 rounded-xl border border-slate-800 p-6">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><dt class="text-sm font-medium text-slate-500">Documento</dt><dd class="mt-1 text-sm text-white">{{ $visitor->document_type }} {{ $visitor->document_number }}</dd></div>
+            <div><dt class="text-sm font-medium text-slate-500">Teléfono</dt><dd class="mt-1 text-sm text-white">{{ $visitor->phone ?? '-' }}</dd></div>
+            <div><dt class="text-sm font-medium text-slate-500">Email</dt><dd class="mt-1 text-sm text-white">{{ $visitor->email ?? '-' }}</dd></div>
+            <div><dt class="text-sm font-medium text-slate-500">Empresa</dt><dd class="mt-1 text-sm text-white">{{ $visitor->company ?? '-' }}</dd></div>
+            <div><dt class="text-sm font-medium text-slate-500">Tipo</dt><dd class="mt-1 text-sm text-white">{{ ucfirst($visitor->visitor_type) }}</dd></div>
+            <div><dt class="text-sm font-medium text-slate-500">Nacionalidad</dt><dd class="mt-1 text-sm text-white">{{ $visitor->nationality ?? '-' }}</dd></div>
+        </dl>
+    </div>
+
+    @if($visitor->vehicles->count())
+    <div class="mt-6 bg-slate-900 rounded-xl border border-slate-800 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4">Vehículos</h3>
+        <ul class="list-disc list-inside text-sm text-slate-400">
+            @foreach($visitor->vehicles as $v)
+            <li>{{ $v->plate }} - {{ $v->brand }} {{ $v->model }} ({{ $v->color }})</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <div class="mt-6 bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-800">
+            <h3 class="text-lg font-semibold text-white">Historial de Accesos</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-800">
+                <thead class="bg-slate-950/60">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Fecha</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Ubicación</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Ingreso</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Salida</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Estado</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                    @forelse($visitor->accessLogs as $log)
+                    <tr class="hover:bg-slate-800/40">
+                        <td class="px-4 py-2 text-sm text-slate-400">{{ $log->entry_time->format('d/m/Y') }}</td>
+                        <td class="px-4 py-2 text-sm text-slate-400">{{ $log->location->name }}</td>
+                        <td class="px-4 py-2 text-sm text-slate-400">{{ $log->entry_time->format('H:i') }}</td>
+                        <td class="px-4 py-2 text-sm text-slate-400">{{ $log->exit_time?->format('H:i') ?? '-' }}</td>
+                        <td class="px-4 py-2">
+                            @if($log->status == 'active')
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-900/30 text-emerald-300 ring-1 ring-emerald-700">
+                                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                                    Dentro
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 ring-1 ring-slate-700">
+                                    <span class="w-1.5 h-1.5 bg-slate-500 rounded-full"></span>
+                                    Salió
+                                </span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="px-4 py-2 text-sm text-slate-500 text-center">Sin accesos registrados</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</x-access-layout>

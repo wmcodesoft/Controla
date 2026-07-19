@@ -1,249 +1,243 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="bg-gradient-to-r from-slate-800 to-indigo-900 -mx-4 -mt-4 px-4 pt-4 pb-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                    <h2 class="text-xl font-bold text-white">Registrar Ingreso</h2>
-                </div>
-                <a href="{{ route('access.logs.index') }}" class="text-sm text-indigo-300 hover:text-white transition-colors">← Volver</a>
+<x-access-layout>
+    <div class="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-8 bg-gradient-to-r from-slate-800 to-indigo-900 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
+                <h2 class="text-xl font-bold text-white">Registrar Ingreso</h2>
             </div>
+            <a href="{{ route('access.logs.index') }}" class="text-sm text-indigo-300 hover:text-white transition-colors">← Volver</a>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="-mt-4">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100">
-                    <div x-data="{ type: 'visitor' }">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Tipo de Ingreso</label>
-                        <div class="flex gap-3">
-                            <label class="relative flex-1 cursor-pointer">
-                                <input type="radio" x-model="type" value="visitor" class="sr-only peer">
-                                <div class="p-3 border-2 rounded-xl text-center transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50 border-gray-200 hover:border-gray-300 bg-white">
-                                    <svg class="w-6 h-6 mx-auto text-gray-400 peer-checked:text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                    <p class="mt-1 text-sm font-medium text-gray-700 peer-checked:text-emerald-700">Visitante peatonal</p>
-                                </div>
-                            </label>
-                            <label class="relative flex-1 cursor-pointer">
-                                <input type="radio" x-model="type" value="visitor_vehicle" class="sr-only peer">
-                                <div class="p-3 border-2 rounded-xl text-center transition-all peer-checked:border-cyan-500 peer-checked:bg-cyan-50 border-gray-200 hover:border-gray-300 bg-white">
-                                    <svg class="w-6 h-6 mx-auto text-gray-400 peer-checked:text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m0 0V21h14v-5m0 0h3l2-4-2-4h-3l-2 4h-1"/></svg>
-                                    <p class="mt-1 text-sm font-medium text-gray-700 peer-checked:text-cyan-700">Visitante vehicular</p>
-                                </div>
-                            </label>
+    <div class="max-w-4xl">
+        <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-800">
+                <div x-data="{ type: 'visitor' }">
+                    <label class="block text-sm font-semibold text-slate-300 mb-3">Tipo de Ingreso</label>
+                    <div class="flex gap-3">
+                        <label class="relative flex-1 cursor-pointer">
+                            <input type="radio" x-model="type" value="visitor" class="sr-only peer">
+                            <div class="p-3 border-2 rounded-xl text-center transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-900/30 border-slate-700 hover:border-slate-600 bg-slate-800">
+                                <svg class="w-6 h-6 mx-auto text-slate-500 peer-checked:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <p class="mt-1 text-sm font-medium text-slate-300 peer-checked:text-emerald-300">Visitante peatonal</p>
+                            </div>
+                        </label>
+                        <label class="relative flex-1 cursor-pointer">
+                            <input type="radio" x-model="type" value="visitor_vehicle" class="sr-only peer">
+                            <div class="p-3 border-2 rounded-xl text-center transition-all peer-checked:border-cyan-500 peer-checked:bg-cyan-900/30 border-slate-700 hover:border-slate-600 bg-slate-800">
+                                <svg class="w-6 h-6 mx-auto text-slate-500 peer-checked:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m0 0V21h14v-5m0 0h3l2-4-2-4h-3l-2 4h-1"/></svg>
+                                <p class="mt-1 text-sm font-medium text-slate-300 peer-checked:text-cyan-300">Visitante vehicular</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <hr class="my-6 border-slate-800">
+
+                    <form method="POST" action="{{ route('access.logs.entry.store') }}" x-show="type === 'visitor'" x-data="entryForm()">
+                        @csrf
+                        <input type="hidden" name="access_type" value="visitor">
+
+                        <div class="bg-slate-800 rounded-xl p-4 mb-6">
+                            <label class="block text-sm font-semibold text-slate-300 mb-2">Buscar Visitante</label>
+                            <div class="relative">
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <input type="text" x-model="search" @input.debounce="searchVisitor()" placeholder="Buscar por documento o nombre..." class="block w-full pl-10 rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <input type="hidden" name="visitor_id" x-model="selectedVisitorId">
+                            <div x-show="searchResults.length > 0 && !selectedVisitorId" class="mt-2 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden divide-y divide-slate-800">
+                                <template x-for="v in searchResults" :key="v.id">
+                                    <div @click="selectVisitor(v)" class="px-4 py-3 hover:bg-indigo-900/30 cursor-pointer flex items-center justify-between transition-colors">
+                                        <div>
+                                            <p class="text-sm font-medium text-white" x-text="v.first_name + ' ' + v.last_name"></p>
+                                            <p class="text-xs text-slate-500" x-text="v.document_type + ' ' + v.document_number"></p>
+                                        </div>
+                                        <span x-show="v.company" class="text-xs text-slate-500" x-text="v.company"></span>
+                                    </div>
+                                </template>
+                            </div>
+                            <div x-show="selectedVisitor" class="mt-3 p-3 bg-emerald-900/30 border border-emerald-800 rounded-xl flex items-center justify-between">
+                                <p class="text-sm font-medium text-emerald-300" x-text="selectedVisitorLabel"></p>
+                                <button type="button" @click="clearSelection()" class="text-xs text-red-400 hover:text-red-300 font-medium">Cambiar</button>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{{ route('access.visitors.create') }}" target="_blank" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    Crear nuevo visitante
+                                </a>
+                            </div>
                         </div>
 
-                        <hr class="my-6 border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Anfitrión</label>
+                                <select name="host_id" required class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($hosts as $host)
+                                    <option value="{{ $host->id }}">{{ $host->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Ubicación</label>
+                                <select name="location_id" required class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($locations as $loc)
+                                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Apartamento Destino</label>
+                                <select name="housing_unit_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">No aplica</option>
+                                    @foreach($housingUnits as $hu)
+                                    <option value="{{ $hu->id }}">{{ $hu->full_label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Propósito</label>
+                                <input type="text" name="purpose" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="Reunión, entrega, etc.">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Empresa a Visitar</label>
+                                <input type="text" name="company_visited" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="Opcional">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Temperatura (°C)</label>
+                                <input type="number" step="0.1" name="screening_temp" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="36.5">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-slate-300">Notas</label>
+                            <textarea name="notes" rows="2" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="Observaciones adicionales..."></textarea>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-800">
+                            <a href="{{ route('access.logs.index') }}" class="inline-flex items-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg font-semibold text-xs text-slate-300 hover:bg-slate-700 transition-colors">Cancelar</a>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-sm">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                Registrar Ingreso
+                            </button>
+                        </div>
+                    </form>
 
-                        {{-- Formulario Visitante Peatonal --}}
-                        <form method="POST" action="{{ route('access.logs.entry.store') }}" x-show="type === 'visitor'" x-data="entryForm()">
-                            @csrf
-                            <input type="hidden" name="access_type" value="visitor">
+                    <form method="POST" action="{{ route('access.logs.entry.store') }}" x-show="type === 'visitor_vehicle'" x-data="visitorVehicleForm()">
+                        @csrf
+                        <input type="hidden" name="access_type" value="visitor_vehicle">
 
-                            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Visitante</label>
-                                <div class="relative">
-                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                    <input type="text" x-model="search" @input.debounce="searchVisitor()" placeholder="Buscar por documento o nombre..." class="block w-full pl-10 rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <input type="hidden" name="visitor_id" x-model="selectedVisitorId">
-                                <div x-show="searchResults.length > 0 && !selectedVisitorId" class="mt-2 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100">
-                                    <template x-for="v in searchResults" :key="v.id">
-                                        <div @click="selectVisitor(v)" class="px-4 py-3 hover:bg-indigo-50 cursor-pointer flex items-center justify-between transition-colors">
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-900" x-text="v.first_name + ' ' + v.last_name"></p>
-                                                <p class="text-xs text-gray-500" x-text="v.document_type + ' ' + v.document_number"></p>
-                                            </div>
-                                            <span x-show="v.company" class="text-xs text-gray-400" x-text="v.company"></span>
+                        <div class="bg-slate-800 rounded-xl p-4 mb-6">
+                            <label class="block text-sm font-semibold text-slate-300 mb-2">Buscar Visitante</label>
+                            <div class="relative">
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <input type="text" x-model="vsearch" @input.debounce="searchVisitor()" placeholder="Buscar por documento o nombre..." class="block w-full pl-10 rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <input type="hidden" name="visitor_id" x-model="selectedVisitorId">
+                            <div x-show="visitorResults.length > 0 && !selectedVisitorId" class="mt-2 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden divide-y divide-slate-800">
+                                <template x-for="v in visitorResults" :key="v.id">
+                                    <div @click="selectVisitor(v)" class="px-4 py-3 hover:bg-indigo-900/30 cursor-pointer flex items-center justify-between transition-colors">
+                                        <div>
+                                            <p class="text-sm font-medium text-white" x-text="v.first_name + ' ' + v.last_name"></p>
+                                            <p class="text-xs text-slate-500" x-text="v.document_type + ' ' + v.document_number"></p>
                                         </div>
-                                    </template>
-                                </div>
-                                <div x-show="selectedVisitor" class="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
-                                    <p class="text-sm font-medium text-emerald-800" x-text="selectedVisitorLabel"></p>
-                                    <button type="button" @click="clearSelection()" class="text-xs text-red-600 hover:text-red-800 font-medium">Cambiar</button>
-                                </div>
-                                <div class="mt-2">
-                                    <a href="{{ route('access.visitors.create') }}" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-1">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                        Crear nuevo visitante
-                                    </a>
-                                </div>
+                                        <span x-show="v.company" class="text-xs text-slate-500" x-text="v.company"></span>
+                                    </div>
+                                </template>
                             </div>
+                            <div x-show="selectedVisitor" class="mt-3 p-3 bg-emerald-900/30 border border-emerald-800 rounded-xl flex items-center justify-between">
+                                <p class="text-sm font-medium text-emerald-300" x-text="selectedVisitorLabel"></p>
+                                <button type="button" @click="clearVisitor()" class="text-xs text-red-400 hover:text-red-300 font-medium">Cambiar</button>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{{ route('access.visitors.create') }}" target="_blank" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    Crear nuevo visitante
+                                </a>
+                            </div>
+                        </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Anfitrión</label>
-                                    <select name="host_id" required class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Seleccionar...</option>
-                                        @foreach($hosts as $host)
-                                        <option value="{{ $host->id }}">{{ $host->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Ubicación</label>
-                                    <select name="location_id" required class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Seleccionar...</option>
-                                        @foreach($locations as $loc)
-                                        <option value="{{ $loc->id }}">{{ $loc->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Apartamento Destino</label>
-                                    <select name="housing_unit_id" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">No aplica</option>
-                                        @foreach($housingUnits as $hu)
-                                        <option value="{{ $hu->id }}">{{ $hu->full_label }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Propósito</label>
-                                    <input type="text" name="purpose" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Reunión, entrega, etc.">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Empresa a Visitar</label>
-                                    <input type="text" name="company_visited" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Opcional">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Temperatura (°C)</label>
-                                    <input type="number" step="0.1" name="screening_temp" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="36.5">
-                                </div>
+                        <div class="bg-cyan-900/30 rounded-xl p-4 mb-6">
+                            <label class="block text-sm font-semibold text-slate-300 mb-2">Buscar Vehículo por Placa</label>
+                            <div class="relative">
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m0 0V21h14v-5m0 0h3l2-4-2-4h-3l-2 4h-1"/></svg>
+                                <input type="text" x-model="psearch" @input.debounce="searchPlate()" placeholder="Buscar por placa..." class="block w-full pl-10 rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700">Notas</label>
-                                <textarea name="notes" rows="2" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Observaciones adicionales..."></textarea>
-                            </div>
-                            <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <a href="{{ route('access.logs.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg font-semibold text-xs text-gray-700 hover:bg-gray-50 transition-colors">Cancelar</a>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 transition-colors shadow-sm">
-                                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                    Registrar Ingreso
-                                </button>
-                            </div>
-                        </form>
-
-                        {{-- Formulario Visitante Vehicular --}}
-                        <form method="POST" action="{{ route('access.logs.entry.store') }}" x-show="type === 'visitor_vehicle'" x-data="visitorVehicleForm()">
-                            @csrf
-                            <input type="hidden" name="access_type" value="visitor_vehicle">
-
-                            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Visitante</label>
-                                <div class="relative">
-                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                    <input type="text" x-model="vsearch" @input.debounce="searchVisitor()" placeholder="Buscar por documento o nombre..." class="block w-full pl-10 rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <input type="hidden" name="visitor_id" x-model="selectedVisitorId">
-                                <div x-show="visitorResults.length > 0 && !selectedVisitorId" class="mt-2 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100">
-                                    <template x-for="v in visitorResults" :key="v.id">
-                                        <div @click="selectVisitor(v)" class="px-4 py-3 hover:bg-indigo-50 cursor-pointer flex items-center justify-between transition-colors">
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-900" x-text="v.first_name + ' ' + v.last_name"></p>
-                                                <p class="text-xs text-gray-500" x-text="v.document_type + ' ' + v.document_number"></p>
-                                            </div>
-                                            <span x-show="v.company" class="text-xs text-gray-400" x-text="v.company"></span>
+                            <input type="hidden" name="vehicle_id" x-model="selectedVehicleId">
+                            <div x-show="plateResults.length > 0 && !selectedVehicleId" class="mt-2 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden divide-y divide-slate-800">
+                                <template x-for="v in plateResults" :key="v.id">
+                                    <div @click="selectVehicle(v)" class="px-4 py-3 hover:bg-cyan-900/30 cursor-pointer flex items-center justify-between transition-colors">
+                                        <div>
+                                            <p class="text-sm font-medium text-white" x-text="v.plate"></p>
+                                            <p class="text-xs text-slate-500" x-text="v.brand + ' ' + v.model + ' (' + v.color + ')'"></p>
                                         </div>
-                                    </template>
-                                </div>
-                                <div x-show="selectedVisitor" class="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
-                                    <p class="text-sm font-medium text-emerald-800" x-text="selectedVisitorLabel"></p>
-                                    <button type="button" @click="clearVisitor()" class="text-xs text-red-600 hover:text-red-800 font-medium">Cambiar</button>
-                                </div>
-                                <div class="mt-2">
-                                    <a href="{{ route('access.visitors.create') }}" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-1">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                        Crear nuevo visitante
-                                    </a>
-                                </div>
+                                        <span x-show="v.visitor" class="text-xs text-slate-500" x-text="v.visitor.first_name + ' ' + v.visitor.last_name"></span>
+                                    </div>
+                                </template>
                             </div>
+                            <div x-show="selectedVehicle" class="mt-3 p-3 bg-cyan-900/30 border border-cyan-800 rounded-xl flex items-center justify-between">
+                                <p class="text-sm font-medium text-cyan-300" x-text="selectedPlateLabel"></p>
+                                <button type="button" @click="clearVehicle()" class="text-xs text-red-400 hover:text-red-300 font-medium">Cambiar</button>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{{ route('access.vehicles.create') }}" target="_blank" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    Registrar nuevo vehículo
+                                </a>
+                            </div>
+                        </div>
 
-                            <div class="bg-cyan-50 rounded-xl p-4 mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Buscar Vehículo por Placa</label>
-                                <div class="relative">
-                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m0 0V21h14v-5m0 0h3l2-4-2-4h-3l-2 4h-1"/></svg>
-                                    <input type="text" x-model="psearch" @input.debounce="searchPlate()" placeholder="Buscar por placa..." class="block w-full pl-10 rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <input type="hidden" name="vehicle_id" x-model="selectedVehicleId">
-                                <div x-show="plateResults.length > 0 && !selectedVehicleId" class="mt-2 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100">
-                                    <template x-for="v in plateResults" :key="v.id">
-                                        <div @click="selectVehicle(v)" class="px-4 py-3 hover:bg-cyan-50 cursor-pointer flex items-center justify-between transition-colors">
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-900" x-text="v.plate"></p>
-                                                <p class="text-xs text-gray-500" x-text="v.brand + ' ' + v.model + ' (' + v.color + ')'"></p>
-                                            </div>
-                                            <span x-show="v.visitor" class="text-xs text-gray-400" x-text="v.visitor.first_name + ' ' + v.visitor.last_name"></span>
-                                        </div>
-                                    </template>
-                                </div>
-                                <div x-show="selectedVehicle" class="mt-3 p-3 bg-cyan-50 border border-cyan-200 rounded-xl flex items-center justify-between">
-                                    <p class="text-sm font-medium text-cyan-800" x-text="selectedPlateLabel"></p>
-                                    <button type="button" @click="clearVehicle()" class="text-xs text-red-600 hover:text-red-800 font-medium">Cambiar</button>
-                                </div>
-                                <div class="mt-2">
-                                    <a href="{{ route('access.vehicles.create') }}" target="_blank" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-1">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                        Registrar nuevo vehículo
-                                    </a>
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Anfitrión</label>
+                                <select name="host_id" required class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($hosts as $host)
+                                    <option value="{{ $host->id }}">{{ $host->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Anfitrión</label>
-                                    <select name="host_id" required class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Seleccionar...</option>
-                                        @foreach($hosts as $host)
-                                        <option value="{{ $host->id }}">{{ $host->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Ubicación</label>
-                                    <select name="location_id" required class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Seleccionar...</option>
-                                        @foreach($locations as $loc)
-                                        <option value="{{ $loc->id }}">{{ $loc->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Apartamento Destino</label>
-                                    <select name="housing_unit_id" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">No aplica</option>
-                                        @foreach($housingUnits as $hu)
-                                        <option value="{{ $hu->id }}">{{ $hu->full_label }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Propósito</label>
-                                    <input type="text" name="purpose" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Reunión, entrega, etc.">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Empresa a Visitar</label>
-                                    <input type="text" name="company_visited" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Temperatura (°C)</label>
-                                    <input type="number" step="0.1" name="screening_temp" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="36.5">
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Ubicación</label>
+                                <select name="location_id" required class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Seleccionar...</option>
+                                    @foreach($locations as $loc)
+                                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700">Notas</label>
-                                <textarea name="notes" rows="2" class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Apartamento Destino</label>
+                                <select name="housing_unit_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">No aplica</option>
+                                    @foreach($housingUnits as $hu)
+                                    <option value="{{ $hu->id }}">{{ $hu->full_label }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
-                                <a href="{{ route('access.logs.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg font-semibold text-xs text-gray-700 hover:bg-gray-50 transition-colors">Cancelar</a>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 transition-colors shadow-sm">
-                                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                    Registrar Ingreso
-                                </button>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Propósito</label>
+                                <input type="text" name="purpose" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="Reunión, entrega, etc.">
                             </div>
-                        </form>
-                    </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Empresa a Visitar</label>
+                                <input type="text" name="company_visited" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300">Temperatura (°C)</label>
+                                <input type="number" step="0.1" name="screening_temp" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="36.5">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-slate-300">Notas</label>
+                            <textarea name="notes" rows="2" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-800">
+                            <a href="{{ route('access.logs.index') }}" class="inline-flex items-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg font-semibold text-xs text-slate-300 hover:bg-slate-700 transition-colors">Cancelar</a>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-sm">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                Registrar Ingreso
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -345,4 +339,4 @@
         }
     </script>
     @endpush
-</x-app-layout>
+</x-access-layout>
