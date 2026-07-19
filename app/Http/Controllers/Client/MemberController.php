@@ -58,6 +58,11 @@ final class MemberController extends Controller
     {
         $clientId = (int) $this->tenantContext->clientId();
 
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('members', 'public');
+        }
+
         $member = $this->createMemberService->execute(new CreateMemberData(
             clientId: $clientId,
             structureId: (int) $request->validated('structure_id'),
@@ -70,6 +75,7 @@ final class MemberController extends Controller
             email: $request->validated('email'),
             hasAppAccess: $request->boolean('has_app_access'),
             isActive: $request->boolean('is_active', true),
+            photoPath: $photoPath,
         ));
 
         return redirect()
@@ -84,6 +90,44 @@ final class MemberController extends Controller
         $member->load('structure');
 
         return view('modules.client.members.show', compact('member'));
+    }
+
+    public function edit(StructureMember $member): View
+    {
+        $this->authorize('update', $member);
+
+        $structures = Structure::query()->orderBy('name')->get();
+        $memberTypes = MemberType::options();
+
+        return view('modules.client.members.edit', compact('member', 'structures', 'memberTypes'));
+    }
+
+    public function update(StoreMemberRequest $request, StructureMember $member): RedirectResponse
+    {
+        $this->authorize('update', $member);
+
+        $data = [
+            'structure_id' => (int) $request->validated('structure_id'),
+            'first_name' => $request->validated('first_name'),
+            'last_name' => $request->validated('last_name'),
+            'document_number' => $request->validated('document_number'),
+            'member_type' => MemberType::from($request->validated('member_type')),
+            'phone_primary' => $request->validated('phone_primary'),
+            'phone_secondary' => $request->validated('phone_secondary'),
+            'email' => $request->validated('email'),
+            'has_app_access' => $request->boolean('has_app_access'),
+            'is_active' => $request->boolean('is_active', true),
+        ];
+
+        if ($request->hasFile('photo')) {
+            $data['photo_path'] = $request->file('photo')->store('members', 'public');
+        }
+
+        $member->update($data);
+
+        return redirect()
+            ->route('client.members.show', $member)
+            ->with('success', 'Persona actualizada en el censo.');
     }
 
     public function export(): BinaryFileResponse

@@ -27,6 +27,7 @@ final class CreateMemberService
                 'has_app_access' => $data->hasAppAccess,
                 'is_active' => $data->isActive,
                 'access_code' => $this->generateAccessCode(),
+                'photo_path' => $data->photoPath,
             ]);
         });
     }

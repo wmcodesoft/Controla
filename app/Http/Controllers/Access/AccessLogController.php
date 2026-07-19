@@ -62,16 +62,29 @@ class AccessLogController extends Controller
             ->with('success', 'Ingreso registrado exitosamente.');
     }
 
-    public function markExit(AccessLog $accessLog)
+    public function markExit(Request $request, AccessLog $accessLog)
     {
         if ($accessLog->status !== 'active') {
             return back()->with('error', 'Este registro ya tiene una salida registrada.');
         }
 
-        $accessLog->update([
+        $data = [
             'exit_time' => now(),
             'status' => 'completed',
-        ]);
+        ];
+
+        if ($request->boolean('has_custody')) {
+            $custodyData = $request->validate([
+                'custody_description' => 'required|string|max:1000',
+                'custody_receiver_name' => 'nullable|string|max:255',
+            ]);
+            $data['has_custody'] = true;
+            $data['custody_description'] = $custodyData['custody_description'];
+            $data['custody_receiver_name'] = $custodyData['custody_receiver_name'];
+            $data['custody_received_at'] = now();
+        }
+
+        $accessLog->update($data);
 
         return redirect()->route('access.logs.index')
             ->with('success', 'Salida registrada exitosamente.');

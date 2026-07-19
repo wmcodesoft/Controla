@@ -6,12 +6,25 @@
             <p class="text-sm text-slate-400">{{ $member->structure?->full_path }} · {{ $member->member_type->label() }}</p>
         </div>
 
+        <div class="flex gap-2 mb-2">
+            <a href="{{ route('client.members.edit', $member) }}" class="inline-flex items-center gap-1.5 rounded-lg bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-600 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Editar
+            </a>
+        </div>
+
         <div class="grid md:grid-cols-2 gap-6">
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-4 space-y-3">
                 <h3 class="text-sm font-semibold text-white">Datos de contacto</h3>
                 <p class="text-sm text-slate-300">Documento: <span class="font-mono">{{ $member->document_number }}</span></p>
                 <p class="text-sm text-slate-300">Teléfono: {{ $member->phone_primary ?? '—' }}</p>
                 <p class="text-sm text-slate-300">Email: {{ $member->email ?? '—' }}</p>
+                @if($member->photo_path)
+                <div class="pt-2">
+                    <p class="text-xs text-slate-500 mb-1">Foto</p>
+                    <img src="{{ Storage::url($member->photo_path) }}" alt="{{ $member->full_name }}" class="w-24 h-24 rounded-lg object-cover border border-slate-700">
+                </div>
+                @endif
             </div>
 
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">

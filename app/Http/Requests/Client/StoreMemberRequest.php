@@ -33,6 +33,7 @@ final class StoreMemberRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:150'],
             'has_app_access' => ['boolean'],
             'is_active' => ['boolean'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
     }
 }

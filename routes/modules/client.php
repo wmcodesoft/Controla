@@ -41,6 +41,12 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access', 'clie
         Route::get('/members/{member}', [MemberController::class, 'show'])
             ->middleware('permission:client.members.manage')
             ->name('members.show');
+        Route::get('/members/{member}/edit', [MemberController::class, 'edit'])
+            ->middleware('permission:client.members.manage')
+            ->name('members.edit');
+        Route::put('/members/{member}', [MemberController::class, 'update'])
+            ->middleware('permission:client.members.manage')
+            ->name('members.update');
 
         Route::get('/vehicles', [VehicleController::class, 'index'])
             ->middleware('permission:client.vehicles.manage')

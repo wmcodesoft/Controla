@@ -13,6 +13,7 @@ class AccessLog extends Model
         'client_id', 'visitor_id', 'user_id', 'resident_id', 'housing_unit_id', 'vehicle_id', 'host_id', 'location_id',
         'authorized_by', 'access_type', 'entry_time', 'exit_time', 'status',
         'purpose', 'company_visited', 'screening_temp', 'qr_code', 'notes',
+        'has_custody', 'custody_description', 'custody_receiver_name', 'custody_received_at',
     ];
 
     protected function casts(): array
@@ -21,6 +22,8 @@ class AccessLog extends Model
             'entry_time' => 'datetime',
             'exit_time' => 'datetime',
             'screening_temp' => 'decimal:1',
+            'has_custody' => 'boolean',
+            'custody_received_at' => 'datetime',
         ];
     }
 

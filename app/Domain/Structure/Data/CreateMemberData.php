@@ -20,5 +20,6 @@ final readonly class CreateMemberData
         public ?string $email = null,
         public bool $hasAppAccess = false,
         public bool $isActive = true,
+        public ?string $photoPath = null,
     ) {}
 }
