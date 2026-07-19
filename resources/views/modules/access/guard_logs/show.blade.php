@@ -32,6 +32,16 @@
                         </span>
                     </div>
 
+                    @if($guardLog->is_panic)
+                    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                        <svg class="w-8 h-8 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                        <div>
+                            <p class="text-sm font-bold text-red-800">ALERTA DE PÁNICO</p>
+                            <p class="text-xs text-red-600">Esta minuta fue generada por el botón de pánico</p>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div class="bg-gray-50 rounded-lg p-3">
                             <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Ubicación</p>
@@ -46,6 +56,30 @@
                             <p class="mt-1 text-sm font-semibold text-gray-900">{{ ucfirst($guardLog->shift_type) }}</p>
                         </div>
                     </div>
+
+                    @if($guardLog->latitude && $guardLog->longitude)
+                    <div class="mb-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Geolocalización</p>
+                        </div>
+                        <p class="text-xs text-gray-600 font-mono">{{ $guardLog->latitude }}, {{ $guardLog->longitude }}</p>
+                        <a href="https://www.google.com/maps?q={{ $guardLog->latitude }},{{ $guardLog->longitude }}" target="_blank" class="mt-1 inline-flex items-center text-xs text-indigo-600 hover:text-indigo-800">
+                            <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                    @endif
+
+                    @if($guardLog->signed_at)
+                    <div class="mb-6 bg-emerald-50 rounded-lg p-4 border border-emerald-200 flex items-center gap-3">
+                        <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div>
+                            <p class="text-sm font-medium text-emerald-800">Firmada digitalmente por {{ $guardLog->user->name }}</p>
+                            <p class="text-xs text-emerald-600">{{ $guardLog->signed_at->format('d/m/Y H:i:s') }}</p>
+                        </div>
+                    </div>
+                    @endif
 
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Descripción</p>

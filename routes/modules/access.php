@@ -73,6 +73,7 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
 
     // Guard Logs
     Route::resource('guard_logs', GuardLogController::class)->except(['edit', 'update']);
+    Route::post('/guard_logs/panic', [GuardLogController::class, 'panic'])->name('guard_logs.panic');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

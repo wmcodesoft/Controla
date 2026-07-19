@@ -33,12 +33,13 @@
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tipo</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Turno</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Descripción</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Geo</th>
                                 <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acción</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @forelse($logs as $log)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-gray-50 transition-colors {{ $log->is_panic ? 'bg-red-50 hover:bg-red-100' : '' }}">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white text-xs font-bold">
@@ -53,16 +54,28 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $log->log_time->format('d/m/Y H:i') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1
-                                        @if($log->type == 'incidente') bg-red-50 text-red-700 ring-red-600/20
+                                        @if($log->is_panic || $log->type == 'incidente') bg-red-50 text-red-700 ring-red-600/20
                                         @elseif($log->type == 'novedad') bg-amber-50 text-amber-700 ring-amber-600/20
                                         @elseif($log->type == 'turno') bg-blue-50 text-blue-700 ring-blue-600/20
                                         @else bg-gray-50 text-gray-700 ring-gray-600/20 @endif">
-                                        {{ ucfirst($log->type) }}
+                                        @if($log->is_panic)🚨 Pánico @else{{ ucfirst($log->type) }}@endif
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ ucfirst($log->shift_type) }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($log->description, 80) }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                                    <a href="{{ route('access.guard_logs.show', $log) }}" class="hover:text-indigo-600 transition-colors">{{ Str::limit($log->description, 80) }}</a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    @if($log->latitude && $log->longitude)
+                                        <span class="inline-flex items-center text-xs text-indigo-500" title="{{ $log->latitude }}, {{ $log->longitude }}">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        </span>
+                                    @else
+                                        <span class="text-xs text-gray-300">—</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                    <a href="{{ route('access.guard_logs.show', $log) }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-xs mr-2">Ver</a>
                                     <form action="{{ route('access.guard_logs.destroy', $log) }}" method="POST" class="inline" onsubmit="return confirm('¿Eliminar esta minuta?')">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-800 font-medium text-xs">Eliminar</button>
@@ -71,7 +84,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center">
+                                <td colspan="8" class="px-6 py-12 text-center">
                                     <svg class="mx-auto h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     <p class="mt-2 text-sm text-gray-500">No hay minutas registradas</p>
                                     <a href="{{ route('access.guard_logs.create') }}" class="mt-3 inline-flex items-center px-3 py-1.5 bg-amber-600 text-white text-xs font-semibold rounded-lg hover:bg-amber-700 transition-colors">
