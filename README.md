@@ -18,8 +18,9 @@ Plataforma SaaS B2B de **control de accesos y vigilancia** para empresas de segu
 | **2** | Operación portería (MVP) — Hub operaciones, lista bloqueo, salida masiva | ✅ Implementada |
 | **3** | BI + vigilancia — Reportes mejorados con exportación | ✅ Implementada |
 | **4** | API REST (Sanctum) + Portal Residente web | ✅ Implementada |
+| **Comercial** | Paquetes empresa + tabla de precios + facturación mensual/anual | ✅ Implementada |
 
-Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md)
+Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md) · [`docs/MODELO-COMERCIAL-PAQUETES.md`](docs/MODELO-COMERCIAL-PAQUETES.md)
 
 ---
 
@@ -27,8 +28,8 @@ Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-IN
 
 | Panel | Prefijo | Rol(es) | Descripción |
 |-------|---------|---------|-------------|
-| **Plataforma** | `/admin` | `super-admin` | KPIs globales, empresas de seguridad |
-| **Empresa** | `/company` | `company-admin` | Cartera de clientes (conjuntos) |
+| **Plataforma** | `/admin` | `super-admin` | KPIs, tabla de precios, empresas y asignación de paquetes |
+| **Empresa** | `/company` | `company-admin` | Licencia, cupo de clientes, cartera de conjuntos |
 | **Conjunto** | `/client` | `client-admin` | Censo: estructuras, personas, vehículos, mascotas, autorizaciones |
 | **Portería** | `/access` | `guardia`, `supervisor`, `client-admin` | Operación diaria: hub operaciones, bloqueo, reportes |
 | **Residente** | `/resident` | `resident`, `anfitrion` | Portal web: pre-autorizaciones y correspondencia |
@@ -160,10 +161,38 @@ Otras rutas auth (recuperar contraseña, etc.) siguen usando `GuestLayout` de Br
 
 ### Base de datos
 
-- `security_companies` — empresas de seguridad
-- `clients` — conjuntos (`plan_tier`, `login_suffix`, `max_structures`)
+- `security_companies` — empresas de seguridad + **paquete comercial** (`package_sku`, `package_size`, `package_modality`, `max_clients`, `package_price_monthly`)
+- `clients` — conjuntos (`login_suffix`; columnas legacy `plan_tier`/`max_structures` ya no limitan el portafolio)
 - `client_user_assignments` — asignación usuario ↔ cliente
 - `client_id` en tablas operativas (locations, buildings, residents, vehicles, etc.)
+
+### Paquetes comerciales (empresa)
+
+La empresa contrata un **cupo de conjuntos** (1 / 5 / 10 / 50 / 100) × **modalidad** (sin hardware / con hardware) × **ciclo** (mensual / anual).
+
+| Concepto | Regla |
+|----------|--------|
+| Precios base | Solo el **súper admin** define 2 unitarios (manual y hardware) en `/admin/pricing` |
+| Matriz | Se calcula sola: descuento por volumen + descuento anual (~17%) |
+| Cupo | Máximo de conjuntos (`clients`) que puede crear la empresa |
+| Portafolio del conjunto | **Ilimitado** (unidades, personas, mascotas, vehículos) |
+| Snapshot | Al asignar paquete se congelan precio, descuentos y vigencia en la empresa |
+
+Catálogo de reglas: `config/tenancy.php` → `pricing` · Motor: `App\Services\Pricing\PriceCalculator`
+
+**Documentación completa:** [`docs/MODELO-COMERCIAL-PAQUETES.md`](docs/MODELO-COMERCIAL-PAQUETES.md)
+
+#### Ejemplo de matriz (valores dependen de unitarios en BD)
+
+| Cupo | Desc. vol. | Manual / mes | Hardware / mes |
+|------|------------|--------------|----------------|
+| 1 | 0% | unitario × 1 | unitario × 1 |
+| 5 | 10% | × 0,90 | × 0,90 |
+| 10 | 15% | × 0,85 | × 0,85 |
+| 50 | 25% | × 0,75 | × 0,75 |
+| 100 | 30% | × 0,70 | × 0,70 |
+
+Ciclo **anual**: total mensual × 12 × (1 − 17%). El súper admin solo edita los dos unitarios en `/admin/pricing`.
 
 ### Arquitectura
 
@@ -171,14 +200,26 @@ Otras rutas auth (recuperar contraseña, etc.) siguen usando `GuestLayout` de Br
 - Middleware: `tenancy.access`, `tenant.unscoped`, `company`, `client.admin`, `platform.admin`
 - Capas: Controllers → Services → Repositories → Models
 - Policies Spatie + permisos en `config/access.php`
+- Helper: `App\Support\Tenancy\CompanyPackage` · `AssignCompanyPackageService`
+
+### Panel Plataforma (`/admin`)
+
+| Ruta | Función |
+|------|---------|
+| `GET /admin/dashboard` | KPIs globales + anclas de precio |
+| `GET /admin/pricing` | Tabla de precios (editar unitarios, matriz calculada) |
+| `PUT /admin/pricing` | Guardar unitarios manual/hardware |
+| `GET /admin/companies` | Listado empresas + cupo/paquete/ciclo |
+| `GET /admin/companies/{id}` | Detalle y cambio de paquete + ciclo |
+| `PUT /admin/companies/{id}/package` | Asignar SKU comercial y facturación |
 
 ### Panel Empresa (`/company`)
 
 | Ruta | Función |
 |------|---------|
-| `GET /company/dashboard` | Métricas de cartera |
-| `GET /company/clients` | Listado de clientes |
-| `POST /company/clients` | Alta de cliente |
+| `GET /company/dashboard` | Licencia: cupo, ciclo, precio, upgrades sugeridos |
+| `GET /company/clients` | Listado de clientes (modalidad heredada de empresa) |
+| `POST /company/clients` | Alta de cliente (bloqueada si cupo lleno) |
 | `GET /company/clients/select` | Selección de conjunto para operar portería |
 
 ---
@@ -307,6 +348,7 @@ Suites relevantes:
 - `tests/Feature/Structure/StructureModuleTest.php`
 - `tests/Feature/Platform/PlatformDashboardTest.php`
 - `tests/Feature/Auth/LoginCsrfTest.php`
+- `tests/Unit/Pricing/PriceCalculatorTest.php`
 
 > Los tests usan `RefreshDatabase` y **recrean** `controla_test` en cada ejecución. Nunca ejecutar la suite completa contra la BD de desarrollo.
 
@@ -350,21 +392,23 @@ API autenticada con tokens Laravel Sanctum para consumo desde app móvil futura.
 
 ```
 app/
-├── Domain/Structure|Tenant/     # DTOs
-├── Enums/                       # StructureType, MemberType, PetSpecies, etc.
-├── Exports/                     # AccessLogsExport, MembersAssemblyExport
+├── Domain/Pricing|Structure|Tenant/  # DTOs (PriceQuote, CreateClientData, etc.)
+├── Enums/                          # BillingCycle, CompanyPackageSku, PackageModality, etc.
+├── Exports/                        # AccessLogsExport, MembersAssemblyExport
 ├── Http/Controllers/
-│   ├── Api/                     # Sanctum API (auth, pre-auth, correspondence)
-│   ├── Platform/                # Súper Admin
-│   ├── Company/                 # Admin Empresa
-│   ├── Client/                  # Admin Cliente (incluye PetController)
-│   ├── Resident/                # Portal Residente
-│   └── Access/                  # Portería (incluye OperationsController, BlocklistController)
-├── Repositories/                # StructurePetRepository, etc.
-├── Services/Structure|Tenant|Auth/
-├── Policies/                    # StructurePetPolicy
-├── View/Components/AuthLayout.php, ResidentLayout.php
-└── Support/Tenancy/
+│   ├── Api/                        # Sanctum API
+│   ├── Platform/                   # Dashboard, Pricing, Company (súper admin)
+│   ├── Company/                    # Admin Empresa
+│   ├── Client/                     # Admin Cliente
+│   ├── Resident/                   # Portal Residente
+│   └── Access/                     # Portería
+├── Models/PricingSettings.php      # Unitarios editables por súper admin
+├── Repositories/
+├── Services/Pricing/               # PriceCalculator, UpdatePlatformPricingService
+├── Services/Tenant/                # AssignCompanyPackageService, CreateClientService
+├── Policies/
+├── View/Components/
+└── Support/Tenancy/CompanyPackage.php
 
 routes/modules/
 ├── admin.php
@@ -387,7 +431,8 @@ php artisan db:seed --class=RoleAndPermissionSeeder  # sincronizar permisos tras
 php artisan db:seed --class=DemoUsersSeeder # solo usuarios demo
 php artisan db:seed --class=TenantSeeder    # solo empresa y clientes
 php artisan config:clear
-php artisan route:list --path=access        # ver rutas del módulo portería
+php artisan route:list --path=admin         # rutas plataforma (pricing, empresas)
+php artisan route:list --path=company       # rutas admin empresa
 php artisan route:list --path=api           # ver rutas API
 php artisan test                            # usa controla_test, no controla
 npm run build                               # compilar assets Vite para producción

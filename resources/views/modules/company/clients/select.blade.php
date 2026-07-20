@@ -14,7 +14,7 @@
                     @csrf
                     <h3 class="font-semibold text-white">{{ $client->name }}</h3>
                     <p class="text-xs text-slate-500 mt-1">
-                        {{ $client->plan_tier->label() }} · {{ $client->slug }}
+                        {{ $client->securityCompany?->package_modality?->label() ?? 'Manual' }} · {{ $client->slug }}
                         @if ($client->relationLoaded('securityCompany') && $client->securityCompany)
                             · {{ $client->securityCompany->trade_name }}
                         @endif

@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\Models\Client;
 use App\Models\SecurityCompany;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 final class SecurityCompanyRepository
@@ -30,5 +31,20 @@ final class SecurityCompanyRepository
             ->orderByDesc('created_at')
             ->limit($limit)
             ->get();
+    }
+
+    public function paginate(int $perPage = 15): LengthAwarePaginator
+    {
+        return SecurityCompany::query()
+            ->withCount('clients')
+            ->orderBy('trade_name')
+            ->paginate($perPage);
+    }
+
+    public function findOrFail(int $id): SecurityCompany
+    {
+        return SecurityCompany::query()
+            ->withCount('clients')
+            ->findOrFail($id);
     }
 }

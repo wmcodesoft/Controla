@@ -2,7 +2,11 @@
     <div class="max-w-2xl">
         <a href="{{ route('company.clients.index') }}" class="text-sm text-slate-400 hover:text-white">&larr; Volver al listado</a>
         <h2 class="mt-4 text-2xl font-bold text-white">Alta de cliente</h2>
-        <p class="text-sm text-slate-400 mt-1">Define el conjunto, sufijo de login y plan contratado.</p>
+        <p class="text-sm text-slate-400 mt-1">
+            Define el conjunto y sufijo de login.
+            Cupo restante: {{ $metrics['clients_remaining'] }} de {{ $metrics['max_clients'] }}
+            ({{ $metrics['package_modality_label'] }}). Portafolio del conjunto sin límite.
+        </p>
 
         <form method="POST" action="{{ route('company.clients.store') }}" class="mt-8 space-y-5 rounded-xl border border-slate-800 bg-slate-900 p-6">
             @csrf
@@ -32,21 +36,10 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">Plan</label>
-                    <select name="plan_tier" required class="mt-1 w-full rounded-lg border-slate-700 bg-slate-950 text-white">
-                        @foreach ($planTiers as $value => $label)
-                            <option value="{{ $value }}" @selected(old('plan_tier') === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                    @error('plan_tier')<p class="mt-1 text-xs text-red-400">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">URL acceso (opcional)</label>
-                    <input type="url" name="access_url" value="{{ old('access_url') }}"
-                           class="mt-1 w-full rounded-lg border-slate-700 bg-slate-950 text-white">
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-300">URL acceso (opcional)</label>
+                <input type="url" name="access_url" value="{{ old('access_url') }}"
+                       class="mt-1 w-full rounded-lg border-slate-700 bg-slate-950 text-white">
             </div>
 
             <label class="inline-flex items-center gap-2 text-sm text-slate-300">

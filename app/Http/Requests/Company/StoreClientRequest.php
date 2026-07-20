@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
 
-use App\Enums\ClientPlanTier;
-use App\Repositories\ClientRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,7 +18,6 @@ final class StoreClientRequest extends FormRequest
     public function rules(): array
     {
         $companyId = (int) $this->user()->security_company_id;
-        $repository = app(ClientRepository::class);
 
         return [
             'name' => ['required', 'string', 'max:150'],
@@ -38,7 +35,6 @@ final class StoreClientRequest extends FormRequest
                 'regex:/^[a-z0-9][a-z0-9\-\.]+$/i',
                 Rule::unique('clients', 'login_suffix')->where('security_company_id', $companyId),
             ],
-            'plan_tier' => ['required', Rule::enum(ClientPlanTier::class)],
             'access_url' => ['nullable', 'url', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
         ];

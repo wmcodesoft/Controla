@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Company;
 
+use App\Enums\BillingCycle;
+use App\Enums\CompanyPackageSku;
+use App\Enums\PackageModality;
 use App\Http\Controllers\Controller;
 use App\Repositories\ClientRepository;
+use App\Services\Pricing\PriceCalculator;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -13,9 +18,10 @@ final class DashboardController extends Controller
 {
     public function __construct(
         private readonly ClientRepository $clientRepository,
+        private readonly PriceCalculator $priceCalculator,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
         abort_unless($user->can('company.dashboard'), 403);
@@ -30,6 +36,34 @@ final class DashboardController extends Controller
         $metrics = $this->clientRepository->metricsForCompany($companyId);
         $recentClients = $this->clientRepository->activeForCompany($companyId)->take(5);
 
-        return view('modules.company.dashboard', compact('metrics', 'recentClients'));
+        $modality = PackageModality::tryFrom((string) $metrics['package_modality'])
+            ?? PackageModality::Manual;
+        $currentSize = (int) $metrics['max_clients'];
+        $upgradeSizes = collect(config('tenancy.package_sizes', [1, 5, 10, 50, 100]))
+            ->map(static fn ($size) => (int) $size)
+            ->filter(static fn (int $size) => $size > $currentSize)
+            ->values()
+            ->all();
+
+        $upgradeQuotes = [];
+        foreach (array_slice($upgradeSizes, 0, 2) as $size) {
+            $monthly = $this->priceCalculator->quote($modality, $size, BillingCycle::Monthly);
+            $annual = $this->priceCalculator->quote($modality, $size, BillingCycle::Annual);
+            $upgradeQuotes[] = [
+                'size' => $size,
+                'label' => CompanyPackageSku::fromParts($size, $modality)->label(),
+                'monthly' => $monthly,
+                'annual' => $annual,
+            ];
+        }
+
+        $annualForCurrent = $this->priceCalculator->quote($modality, max(1, $currentSize), BillingCycle::Annual);
+
+        return view('modules.company.dashboard', compact(
+            'metrics',
+            'recentClients',
+            'upgradeQuotes',
+            'annualForCurrent',
+        ));
     }
 }

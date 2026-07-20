@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
 
-use App\Enums\ClientPlanTier;
 use App\Models\Client;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -46,7 +45,6 @@ final class UpdateClientRequest extends FormRequest
                     ->where('security_company_id', $companyId)
                     ->ignore($client->id),
             ],
-            'plan_tier' => ['required', Rule::enum(ClientPlanTier::class)],
             'access_url' => ['nullable', 'url', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
         ];

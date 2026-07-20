@@ -28,21 +28,16 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">Plan</label>
-                    <select name="plan_tier" class="mt-1 w-full rounded-lg border-slate-700 bg-slate-950 text-white">
-                        @foreach ($planTiers as $value => $label)
-                            <option value="{{ $value }}" @selected(old('plan_tier', $client->plan_tier->value) === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-300">URL acceso</label>
-                    <input type="url" name="access_url" value="{{ old('access_url', $client->access_url) }}"
-                           class="mt-1 w-full rounded-lg border-slate-700 bg-slate-950 text-white">
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-300">URL acceso</label>
+                <input type="url" name="access_url" value="{{ old('access_url', $client->access_url) }}"
+                       class="mt-1 w-full rounded-lg border-slate-700 bg-slate-950 text-white">
             </div>
+
+            <p class="text-xs text-slate-500">
+                Modalidad del conjunto: {{ $client->securityCompany?->package_modality?->label() ?? '—' }}
+                (heredada del paquete de la empresa). Portafolio sin límite de unidades.
+            </p>
 
             <label class="inline-flex items-center gap-2 text-sm text-slate-300">
                 <input type="hidden" name="is_active" value="0">

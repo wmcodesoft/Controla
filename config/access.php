@@ -159,6 +159,8 @@ return [
             'permission' => 'platform.dashboard',
             'items' => [
                 ['label' => 'Resumen', 'route' => 'admin.dashboard', 'permission' => 'platform.dashboard'],
+                ['label' => 'Tabla de precios', 'route' => 'admin.pricing.edit', 'permission' => 'platform.companies.view'],
+                ['label' => 'Empresas', 'route' => 'admin.companies.index', 'permission' => 'platform.companies.view'],
             ],
         ],
         'company' => [

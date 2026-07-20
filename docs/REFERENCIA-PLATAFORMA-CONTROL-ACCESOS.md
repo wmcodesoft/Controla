@@ -1767,7 +1767,7 @@ public function storeSupervisorAnnotation(Request $request) {
 | PYME | Hasta 100 |
 | Industrial | 100–500 |
 
-**Implicación para Controla:** el pricing puede ser **por `client_id` + tier de unidades** (`structures` hoja). El panel **Admin Empresa** debe mostrar consumo vs plan contratado.
+**Implicación para Controla (actualizado):** pricing = unitarios editables por súper admin + matriz (cupos 1/5/10/50/100 × manual/hardware × mensual/anual). Portafolio del conjunto ilimitado. Ver `/admin/pricing` y `config/tenancy.php` → `pricing`.
 
 #### C.4.4 Brecha B2B confirmada (oportunidad Controla)
 
@@ -1936,7 +1936,7 @@ Fusión de marketing oficial + v13 documentada en §0.6 y §1.
 
 | Hallazgo Axesa | Artefacto Controla sugerido |
 |----------------|----------------------------|
-| Plan por # unidades | `clients.plan_tier`, `clients.max_structures` |
+| Plan por # unidades | **Deprecado comercialmente.** Cupo por # clientes en empresa (`security_companies.max_clients` + `package_sku`). Portafolio del conjunto ilimitado. |
 | Logo por cliente | `clients.logo_path`, `config('app.client_brand')` |
 | Master por cliente | `users.is_client_master` + rol `client-admin` |
 | Sufijo login `@palmasdelingenio` | `clients.login_suffix` |

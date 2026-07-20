@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Client;
+use App\Models\SecurityCompany;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -14,6 +15,7 @@ final class ClientRepository
     {
         return Client::query()
             ->where('security_company_id', $companyId)
+            ->with(['securityCompany'])
             ->withCount('assignments')
             ->orderBy('name')
             ->paginate($perPage);
@@ -57,6 +59,7 @@ final class ClientRepository
     public function activeForCompany(int $companyId): Collection
     {
         return Client::query()
+            ->with('securityCompany')
             ->where('security_company_id', $companyId)
             ->where('is_active', true)
             ->orderBy('name')
@@ -73,14 +76,43 @@ final class ClientRepository
             ->get();
     }
 
+    /** @return array<string, mixed> */
     public function metricsForCompany(int $companyId): array
     {
+        $company = SecurityCompany::query()->findOrFail($companyId);
         $base = Client::query()->where('security_company_id', $companyId);
+        $total = (clone $base)->count();
+        $active = (clone $base)->where('is_active', true)->count();
+        $inactive = (clone $base)->where('is_active', false)->count();
+        $maxClients = (int) ($company->max_clients ?: 0);
+        $usageRatio = $maxClients > 0 ? round(($total / $maxClients) * 100, 1) : 0.0;
+        $features = $company->package_modality?->features() ?? [];
 
         return [
-            'total' => (clone $base)->count(),
-            'active' => (clone $base)->where('is_active', true)->count(),
-            'inactive' => (clone $base)->where('is_active', false)->count(),
+            'total' => $total,
+            'active' => $active,
+            'inactive' => $inactive,
+            'max_clients' => $maxClients,
+            'clients_remaining' => max(0, $maxClients - $total),
+            'usage_ratio' => $usageRatio,
+            'package_sku' => $company->package_sku?->value,
+            'package_label' => $company->packageLabel(),
+            'package_modality' => $company->package_modality?->value ?? 'manual',
+            'package_modality_label' => $company->package_modality?->label() ?? 'Sin hardware',
+            'package_price' => (float) ($company->package_price_monthly ?? 0),
+            'package_price_annual' => (float) ($company->package_price_annual ?? 0),
+            'contracted_amount' => $company->contractedAmount(),
+            'billing_cycle' => $company->billing_cycle?->value ?? 'monthly',
+            'billing_cycle_label' => $company->billingPeriodLabel(),
+            'subscription_status' => $company->subscription_status?->value ?? 'active',
+            'subscription_status_label' => $company->subscription_status?->label() ?? 'Activa',
+            'package_starts_at' => $company->package_starts_at,
+            'package_ends_at' => $company->package_ends_at,
+            'volume_discount_pct' => (float) ($company->volume_discount_pct ?? 0),
+            'annual_discount_pct' => (float) ($company->annual_discount_pct ?? 0),
+            'features' => $features,
+            'is_quota_full' => $maxClients > 0 && $total >= $maxClients,
+            'is_hardware' => ($company->package_modality?->value ?? 'manual') === 'hardware',
         ];
     }
 }

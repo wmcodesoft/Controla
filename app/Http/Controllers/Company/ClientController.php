@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Company;
 
 use App\Domain\Tenant\Data\CreateClientData;
-use App\Enums\ClientPlanTier;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\StoreClientRequest;
 use App\Http\Requests\Company\UpdateClientRequest;
@@ -31,17 +30,25 @@ final class ClientController extends Controller
 
         $companyId = $this->companyId($request);
         $clients = $this->clientRepository->paginateForCompany($companyId);
+        $metrics = $this->clientRepository->metricsForCompany($companyId);
 
-        return view('modules.company.clients.index', compact('clients'));
+        return view('modules.company.clients.index', compact('clients', 'metrics'));
     }
 
-    public function create(): View
+    public function create(Request $request): View|RedirectResponse
     {
         $this->authorize('create', Client::class);
 
-        $planTiers = ClientPlanTier::options();
+        $companyId = $this->companyId($request);
+        $metrics = $this->clientRepository->metricsForCompany($companyId);
 
-        return view('modules.company.clients.create', compact('planTiers'));
+        if ($metrics['is_quota_full']) {
+            return redirect()
+                ->route('company.clients.index')
+                ->with('error', 'Has alcanzado el cupo de clientes de tu paquete. Solicita ampliación a plataforma.');
+        }
+
+        return view('modules.company.clients.create', compact('metrics'));
     }
 
     public function store(StoreClientRequest $request): RedirectResponse
@@ -53,7 +60,6 @@ final class ClientController extends Controller
             name: $request->validated('name'),
             slug: $request->validated('slug'),
             loginSuffix: $request->validated('login_suffix'),
-            planTier: ClientPlanTier::from($request->validated('plan_tier')),
             accessUrl: $request->validated('access_url'),
             isActive: $request->boolean('is_active', true),
         ));
@@ -68,6 +74,7 @@ final class ClientController extends Controller
         $this->authorize('view', $client);
         $this->assertCompanyOwnership($request, $client);
 
+        $client->load(['securityCompany']);
         $client->loadCount('assignments');
 
         return view('modules.company.clients.show', compact('client'));
@@ -78,9 +85,9 @@ final class ClientController extends Controller
         $this->authorize('update', $client);
         $this->assertCompanyOwnership($request, $client);
 
-        $planTiers = ClientPlanTier::options();
+        $client->load('securityCompany');
 
-        return view('modules.company.clients.edit', compact('client', 'planTiers'));
+        return view('modules.company.clients.edit', compact('client'));
     }
 
     public function update(UpdateClientRequest $request, Client $client): RedirectResponse

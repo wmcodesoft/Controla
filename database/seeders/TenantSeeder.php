@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Enums\BillingCycle;
 use App\Enums\ClientPlanTier;
+use App\Enums\CompanyPackageSku;
 use App\Models\AccessLog;
 use App\Models\Building;
 use App\Models\Client;
@@ -13,10 +15,12 @@ use App\Models\GuardLog;
 use App\Models\HousingUnit;
 use App\Models\Location;
 use App\Models\PreAuthorization;
+use App\Models\PricingSettings;
 use App\Models\Resident;
 use App\Models\SecurityCompany;
 use App\Models\Vehicle;
 use App\Models\Visitor;
+use App\Services\Tenant\AssignCompanyPackageService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -24,6 +28,8 @@ final class TenantSeeder extends Seeder
 {
     public function run(): void
     {
+        PricingSettings::current();
+
         $company = SecurityCompany::query()->firstOrCreate(
             ['tax_id' => '900123456-1'],
             [
@@ -35,19 +41,25 @@ final class TenantSeeder extends Seeder
             ]
         );
 
+        app(AssignCompanyPackageService::class)->execute(
+            $company,
+            CompanyPackageSku::Pack50Manual,
+            BillingCycle::Monthly,
+        );
+
         $palmas = Client::query()->firstOrCreate(
             ['security_company_id' => $company->id, 'slug' => 'palmas-del-ingenio'],
             [
                 'name' => 'Palmas del Ingenio',
                 'login_suffix' => 'palmasdelingenio',
-                'plan_tier' => ClientPlanTier::Deluxe,
-                'max_structures' => ClientPlanTier::Deluxe->maxStructures(),
+                'plan_tier' => ClientPlanTier::Economic,
+                'max_structures' => ClientPlanTier::Economic->maxStructures(),
                 'access_url' => 'https://controla.test',
                 'is_active' => true,
             ]
         );
 
-        $torres = Client::query()->firstOrCreate(
+        Client::query()->firstOrCreate(
             ['security_company_id' => $company->id, 'slug' => 'torres-loma'],
             [
                 'name' => 'Torres de la Loma',

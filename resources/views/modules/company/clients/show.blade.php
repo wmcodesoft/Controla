@@ -4,7 +4,10 @@
             <div>
                 <a href="{{ route('company.clients.index') }}" class="text-sm text-slate-400 hover:text-white">&larr; Clientes</a>
                 <h2 class="mt-2 text-2xl font-bold text-white">{{ $client->name }}</h2>
-                <p class="text-sm text-slate-400 mt-1">Slug: {{ $client->slug }} · Plan {{ $client->plan_tier->label() }}</p>
+                <p class="text-sm text-slate-400 mt-1">
+                    Slug: {{ $client->slug }}
+                    · {{ $client->securityCompany?->package_modality?->label() ?? 'Modalidad N/D' }}
+                </p>
             </div>
             <div class="flex flex-wrap gap-2">
                 @can('operate', $client)
@@ -29,8 +32,9 @@
                 <p class="mt-2 font-mono text-indigo-300">usuario{{ $client->loginDomain() }}</p>
             </div>
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
-                <p class="text-xs uppercase text-slate-500">Capacidad plan</p>
-                <p class="mt-2 text-2xl font-bold text-white">{{ $client->max_structures }} unidades</p>
+                <p class="text-xs uppercase text-slate-500">Portafolio</p>
+                <p class="mt-2 text-2xl font-bold text-white">Ilimitado</p>
+                <p class="mt-1 text-xs text-slate-500">Unidades, personas, mascotas y vehículos sin tope</p>
             </div>
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
                 <p class="text-xs uppercase text-slate-500">Usuarios asignados</p>

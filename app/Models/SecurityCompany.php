@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\BillingCycle;
+use App\Enums\CompanyPackageSku;
+use App\Enums\PackageModality;
+use App\Enums\SubscriptionStatus;
+use App\Support\Tenancy\CompanyPackage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,12 +25,38 @@ class SecurityCompany extends Model
         'phone',
         'logo_path',
         'is_active',
+        'package_size',
+        'package_modality',
+        'package_sku',
+        'package_price_monthly',
+        'max_clients',
+        'billing_cycle',
+        'unit_price_snapshot',
+        'volume_discount_pct',
+        'annual_discount_pct',
+        'package_price_annual',
+        'package_starts_at',
+        'package_ends_at',
+        'subscription_status',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'package_size' => 'integer',
+            'package_modality' => PackageModality::class,
+            'package_sku' => CompanyPackageSku::class,
+            'package_price_monthly' => 'decimal:2',
+            'max_clients' => 'integer',
+            'billing_cycle' => BillingCycle::class,
+            'unit_price_snapshot' => 'decimal:2',
+            'volume_discount_pct' => 'decimal:4',
+            'annual_discount_pct' => 'decimal:4',
+            'package_price_annual' => 'decimal:2',
+            'package_starts_at' => 'datetime',
+            'package_ends_at' => 'datetime',
+            'subscription_status' => SubscriptionStatus::class,
         ];
     }
 
@@ -42,5 +73,38 @@ class SecurityCompany extends Model
     public function activeClients(): HasMany
     {
         return $this->clients()->where('is_active', true);
+    }
+
+    public function packageLabel(): string
+    {
+        $sku = CompanyPackage::skuOf($this);
+
+        return $sku?->label() ?? 'Sin paquete asignado';
+    }
+
+    public function allowsFeature(string $feature): bool
+    {
+        return CompanyPackage::allows($this, $feature);
+    }
+
+    public function clientsRemaining(): int
+    {
+        $max = (int) ($this->max_clients ?: 0);
+
+        return max(0, $max - $this->clients()->count());
+    }
+
+    public function contractedAmount(): float
+    {
+        if ($this->billing_cycle === BillingCycle::Annual) {
+            return (float) ($this->package_price_annual ?? 0);
+        }
+
+        return (float) ($this->package_price_monthly ?? 0);
+    }
+
+    public function billingPeriodLabel(): string
+    {
+        return $this->billing_cycle?->label() ?? 'Mensual';
     }
 }

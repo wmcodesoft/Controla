@@ -8,11 +8,53 @@ return [
         'active_company_key' => 'tenancy.active_company_id',
     ],
 
+    /*
+    | Legacy Axesa-style tiers (kept for DB columns on clients; not sold commercially).
+    */
     'plan_tiers' => [
         'economic' => ['label' => 'Económico', 'max_structures' => 20],
         'deluxe' => ['label' => 'Deluxe', 'max_structures' => 50],
         'pro' => ['label' => 'Pro', 'max_structures' => 100],
         'ultimate' => ['label' => 'Ultimate', 'max_structures' => 200],
+    ],
+
+    /*
+    | Commercial package sizes (client seats). Unit prices live in pricing_settings (DB);
+    | volume/annual discounts below drive the auto-calculated price matrix.
+    */
+    'package_sizes' => [1, 5, 10, 50, 100],
+
+    'pricing' => [
+        'currency' => 'COP',
+        'default_unit_manual' => 80_000,
+        'default_unit_hardware' => 150_000,
+        'volume_discounts' => [
+            1 => 0.0,
+            5 => 0.10,
+            10 => 0.15,
+            50 => 0.25,
+            100 => 0.30,
+        ],
+        'annual_discount' => 0.17,
+    ],
+
+    'features' => [
+        'manual' => [
+            'census',
+            'manual_gate',
+            'resident_web',
+        ],
+        'hardware' => [
+            'census',
+            'manual_gate',
+            'resident_web',
+            'barcode_reader',
+            'id_reader',
+            'lpr',
+            'rfid',
+            'facial',
+            'app_device_bridge',
+        ],
     ],
 
     'tenant_scoped_tables' => [

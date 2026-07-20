@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Platform;
 
 use App\Http\Controllers\Controller;
+use App\Models\PricingSettings;
 use App\Repositories\SecurityCompanyRepository;
 use Illuminate\View\View;
 
@@ -20,7 +21,8 @@ final class DashboardController extends Controller
 
         $metrics = $this->securityCompanyRepository->platformMetrics();
         $recentCompanies = $this->securityCompanyRepository->recentCompanies();
+        $pricing = PricingSettings::current();
 
-        return view('modules.admin.dashboard', compact('metrics', 'recentCompanies'));
+        return view('modules.admin.dashboard', compact('metrics', 'recentCompanies', 'pricing'));
     }
 }
