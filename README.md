@@ -19,8 +19,9 @@ Plataforma SaaS B2B de **control de accesos y vigilancia** para empresas de segu
 | **3** | BI + vigilancia — Reportes mejorados con exportación | ✅ Implementada |
 | **4** | API REST (Sanctum) + Portal Residente web | ✅ Implementada |
 | **Comercial** | Paquetes empresa + tabla de precios + facturación mensual/anual | ✅ Implementada |
+| **UI Empresa** | Design system `x-ui.*`, dashboard licencia + cartera, nav Portería/Conjunto | ✅ Implementada (v1) |
 
-Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md) · [`docs/MODELO-COMERCIAL-PAQUETES.md`](docs/MODELO-COMERCIAL-PAQUETES.md)
+Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md) · [`docs/MODELO-COMERCIAL-PAQUETES.md`](docs/MODELO-COMERCIAL-PAQUETES.md) · [**Diseño UI panel empresa**](docs/DISENO-UI-CONTROLA.md)
 
 ---
 
@@ -222,6 +223,22 @@ Ciclo **anual**: total mensual × 12 × (1 − 17%). El súper admin solo edita 
 | `POST /company/clients` | Alta de cliente (bloqueada si cupo lleno) |
 | `GET /company/clients/select` | Selección de conjunto para operar portería |
 
+### Diseño UI — Panel Empresa (`/company`)
+
+Sistema visual unificado para el shell y formularios del panel empresa. **Guía completa:** [`docs/DISENO-UI-CONTROLA.md`](docs/DISENO-UI-CONTROLA.md)
+
+| Elemento | Detalle |
+|----------|---------|
+| Layout | `resources/views/layouts/company.blade.php` — header con título, empresa, **Portería** y **+ Conjunto**; sidebar con cierre de sesión al pie |
+| Dashboard | Franja de licencia, tabla de conjuntos (protagonista) y panel lateral **Cuenta** (ciclo, ampliar cupo, features) |
+| Componentes | `x-ui.button`, `x-ui.label`, `x-ui.input`, `x-ui.field-error` en `resources/views/components/ui/` |
+| Contexto cupo | `CompanyLayoutComposer` inyecta `companyContext` en el layout |
+| Vistas migradas | `company/dashboard`, `company/clients/create`, `company/clients/edit` |
+
+Variantes de botón: `primary` (indigo), `secondary`, `success` (emerald). Tamaños: `sm`, `md`.
+
+**Pendiente migración:** `company/clients/index`, `show`, `select` y paneles admin/access/client con acentos propios (violet/teal).
+
 ---
 
 ## Fase 1 — Estructura / censo (implementado)
@@ -408,7 +425,10 @@ app/
 ├── Services/Tenant/                # AssignCompanyPackageService, CreateClientService
 ├── Policies/
 ├── View/Components/
+├── View/Composers/CompanyLayoutComposer.php
 └── Support/Tenancy/CompanyPackage.php
+
+resources/views/components/ui/     # x-ui.* (button, label, input, field-error)
 
 routes/modules/
 ├── admin.php

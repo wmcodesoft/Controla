@@ -87,8 +87,17 @@ final class ClientRepository
         $maxClients = (int) ($company->max_clients ?: 0);
         $usageRatio = $maxClients > 0 ? round(($total / $maxClients) * 100, 1) : 0.0;
         $features = $company->package_modality?->features() ?? [];
+        $featureLabels = $company->package_modality?->featureLabels() ?? [];
+        $contractedAmount = $company->contractedAmount();
+        $costPerClientSlot = $maxClients > 0 ? round($contractedAmount / $maxClients, 0) : 0.0;
+        $endsAt = $company->package_ends_at;
+        $daysUntilRenewal = $endsAt !== null
+            ? (int) now()->startOfDay()->diffInDays($endsAt->copy()->startOfDay(), false)
+            : null;
 
         return [
+            'company_name' => $company->trade_name,
+            'users_count' => $company->users()->count(),
             'total' => $total,
             'active' => $active,
             'inactive' => $inactive,
@@ -111,8 +120,25 @@ final class ClientRepository
             'volume_discount_pct' => (float) ($company->volume_discount_pct ?? 0),
             'annual_discount_pct' => (float) ($company->annual_discount_pct ?? 0),
             'features' => $features,
+            'feature_labels' => $featureLabels,
+            'cost_per_client_slot' => $costPerClientSlot,
+            'days_until_renewal' => $daysUntilRenewal,
+            'is_renewal_soon' => $daysUntilRenewal !== null && $daysUntilRenewal >= 0 && $daysUntilRenewal <= 30,
+            'is_expired' => $daysUntilRenewal !== null && $daysUntilRenewal < 0,
             'is_quota_full' => $maxClients > 0 && $total >= $maxClients,
             'is_hardware' => ($company->package_modality?->value ?? 'manual') === 'hardware',
         ];
+    }
+
+    /** @return Collection<int, Client> */
+    public function recentForCompany(int $companyId, int $limit = 5): Collection
+    {
+        return Client::query()
+            ->with('securityCompany')
+            ->where('security_company_id', $companyId)
+            ->withCount('assignments')
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
     }
 }

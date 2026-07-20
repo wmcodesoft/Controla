@@ -8,6 +8,7 @@ use App\Enums\BillingCycle;
 use App\Enums\CompanyPackageSku;
 use App\Enums\PackageModality;
 use App\Http\Controllers\Controller;
+use App\Models\SecurityCompany;
 use App\Repositories\ClientRepository;
 use App\Services\Pricing\PriceCalculator;
 use Illuminate\Http\RedirectResponse;
@@ -33,8 +34,9 @@ final class DashboardController extends Controller
         $companyId = (int) $user->security_company_id;
         abort_unless($companyId > 0, 403, 'Usuario sin empresa de seguridad asignada.');
 
+        $company = SecurityCompany::query()->findOrFail($companyId);
         $metrics = $this->clientRepository->metricsForCompany($companyId);
-        $recentClients = $this->clientRepository->activeForCompany($companyId)->take(5);
+        $recentClients = $this->clientRepository->recentForCompany($companyId, 6);
 
         $modality = PackageModality::tryFrom((string) $metrics['package_modality'])
             ?? PackageModality::Manual;
@@ -46,7 +48,7 @@ final class DashboardController extends Controller
             ->all();
 
         $upgradeQuotes = [];
-        foreach (array_slice($upgradeSizes, 0, 2) as $size) {
+        foreach ($upgradeSizes as $index => $size) {
             $monthly = $this->priceCalculator->quote($modality, $size, BillingCycle::Monthly);
             $annual = $this->priceCalculator->quote($modality, $size, BillingCycle::Annual);
             $upgradeQuotes[] = [
@@ -54,16 +56,20 @@ final class DashboardController extends Controller
                 'label' => CompanyPackageSku::fromParts($size, $modality)->label(),
                 'monthly' => $monthly,
                 'annual' => $annual,
+                'recommended' => $index === 0,
             ];
         }
 
         $annualForCurrent = $this->priceCalculator->quote($modality, max(1, $currentSize), BillingCycle::Annual);
+        $monthlyForCurrent = $this->priceCalculator->quote($modality, max(1, $currentSize), BillingCycle::Monthly);
 
         return view('modules.company.dashboard', compact(
+            'company',
             'metrics',
             'recentClients',
             'upgradeQuotes',
             'annualForCurrent',
+            'monthlyForCurrent',
         ));
     }
 }

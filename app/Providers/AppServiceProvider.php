@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Support\Tenancy\TenantContext;
+use App\View\Composers\CompanyLayoutComposer;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,5 +25,7 @@ class AppServiceProvider extends ServiceProvider
 
             return null;
         });
+
+        View::composer('layouts.company', CompanyLayoutComposer::class);
     }
 }

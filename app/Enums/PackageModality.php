@@ -27,4 +27,15 @@ enum PackageModality: string
     {
         return in_array($feature, $this->features(), true);
     }
+
+    /** @return list<string> */
+    public function featureLabels(): array
+    {
+        $labels = config('tenancy.feature_labels', []);
+
+        return array_values(array_map(
+            static fn (string $key) => $labels[$key] ?? str_replace('_', ' ', $key),
+            $this->features()
+        ));
+    }
 }

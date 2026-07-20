@@ -57,6 +57,18 @@ return [
         ],
     ],
 
+    'feature_labels' => [
+        'census' => 'Censo ilimitado por conjunto',
+        'manual_gate' => 'Portería y registro manual',
+        'resident_web' => 'Portal web residente',
+        'barcode_reader' => 'Lector código de barras',
+        'id_reader' => 'Lector de cédula / documento',
+        'lpr' => 'Reconocimiento de placas (LPR)',
+        'rfid' => 'Tarjetas y chips RFID',
+        'facial' => 'Reconocimiento facial',
+        'app_device_bridge' => 'App residente ↔ dispositivos',
+    ],
+
     'tenant_scoped_tables' => [
         'locations',
         'buildings',
