@@ -21,7 +21,8 @@ final class PlatformDashboardTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertOk();
-        $response->assertSee('Empresas');
+        $response->assertSee('Cartera');
+        $response->assertSee('Al día');
         $response->assertSee('SJ Seguridad');
     }
 

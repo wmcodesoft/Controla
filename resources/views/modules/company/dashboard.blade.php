@@ -77,7 +77,7 @@
                                             <p class="font-medium text-slate-200">{{ $client->name }}</p>
                                             <p class="text-xs text-slate-600">{{ $client->slug }}</p>
                                         </td>
-                                        <td class="px-4 py-3 font-mono text-xs text-indigo-300/90">@{{ $client->login_suffix }}</td>
+                                        <td class="px-4 py-3 font-mono text-xs text-indigo-300/90">usuario{{ $client->loginDomain() }}</td>
                                         <td class="px-4 py-3 text-right text-slate-400">{{ $client->assignments_count }}</td>
                                         <td class="px-4 py-3">
                                             @if ($client->is_active)

@@ -26,10 +26,14 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
                 <p class="text-xs uppercase text-slate-500">Login residentes</p>
                 <p class="mt-2 font-mono text-indigo-300">usuario{{ $client->loginDomain() }}</p>
+            </div>
+            <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                <p class="text-xs uppercase text-slate-500">Dirección</p>
+                <p class="mt-2 text-sm text-slate-200">{{ $client->address ?: '—' }}</p>
             </div>
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
                 <p class="text-xs uppercase text-slate-500">Portafolio</p>

@@ -11,13 +11,13 @@
 </head>
 <body class="font-sans antialiased bg-slate-950 text-slate-100">
     <div class="min-h-screen flex">
-        <aside class="hidden lg:flex lg:w-64 lg:flex-col bg-slate-900 border-r border-slate-800">
+        <aside class="hidden lg:flex lg:w-64 lg:flex-col bg-slate-900 border-r border-slate-800 shrink-0">
             <div class="px-6 py-5 border-b border-slate-800">
                 <p class="text-xs uppercase tracking-wider text-slate-500">Controla</p>
                 <h1 class="text-lg font-semibold text-white">Panel Plataforma</h1>
                 <p class="text-xs text-violet-300 mt-1">Súper Admin</p>
             </div>
-            <nav class="flex-1 px-4 py-6 space-y-1">
+            <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
                 @foreach (config('access.navigation.admin.items', []) as $item)
                     @can($item['permission'])
                     <a href="{{ route($item['route']) }}"
@@ -26,34 +26,48 @@
                     </a>
                     @endcan
                 @endforeach
-                <a href="{{ route('company.clients.select') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 mt-4">
-                    <span>Operar portería</span>
-                </a>
             </nav>
-            <div class="px-4 py-4 border-t border-slate-800 text-xs text-slate-500">
-                {{ Auth::user()->name }}
+            <div class="px-4 py-4 border-t border-slate-800">
+                <p class="text-xs text-slate-400 truncate">{{ Auth::user()->name }}</p>
+                <form method="POST" action="{{ route('logout') }}" class="mt-1">
+                    @csrf
+                    <button type="submit" class="text-xs text-slate-500 hover:text-white transition">
+                        Cerrar sesión
+                    </button>
+                </form>
             </div>
         </aside>
 
-        <div class="flex-1 flex flex-col min-w-0">
-            <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-10">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-                    <h2 class="text-xl font-semibold text-white">{{ $title ?? 'Panel Plataforma' }}</h2>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-sm text-slate-400 hover:text-white">Cerrar sesión</button>
-                    </form>
+        <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+            <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-10 shrink-0">
+                <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+                    <div class="min-w-0">
+                        <h2 class="text-base font-semibold text-white truncate">{{ $title ?? 'Panel Plataforma' }}</h2>
+                        <p class="text-xs text-slate-500">Plataforma · Súper Admin</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        @can('platform.companies.view')
+                            <x-ui.button variant="secondary" :href="route('admin.pricing.edit')">Precios</x-ui.button>
+                        @endcan
+                        @can('platform.companies.view')
+                            <x-ui.button variant="platform" :href="route('admin.companies.index')">Empresas</x-ui.button>
+                        @endcan
+                    </div>
                 </div>
             </header>
 
             @if (session('success'))
-                <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4">
+                <div class="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-3 shrink-0">
                     <div class="rounded-lg bg-emerald-900/40 border border-emerald-700 text-emerald-200 px-4 py-3 text-sm">{{ session('success') }}</div>
                 </div>
             @endif
+            @if (session('warning'))
+                <div class="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-3 shrink-0">
+                    <div class="rounded-lg bg-amber-900/40 border border-amber-700 text-amber-200 px-4 py-3 text-sm">{{ session('warning') }}</div>
+                </div>
+            @endif
 
-            <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+            <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 min-h-0 flex flex-col">
                 {{ $slot }}
             </main>
         </div>

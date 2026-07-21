@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Tenant;
 
 use App\Domain\Tenant\Data\CreateClientData;
+use App\Enums\ClientLifecycle;
 use App\Enums\ClientPlanTier;
 use App\Models\Client;
 use App\Models\SecurityCompany;
@@ -23,18 +24,20 @@ final class CreateClientService
             'name' => $data->name,
             'slug' => Str::slug($data->slug),
             'login_suffix' => Str::lower($data->loginSuffix),
+            'address' => $data->address,
             // Legacy columns retained; portfolio is unlimited commercially.
             'plan_tier' => ClientPlanTier::Economic,
             'max_structures' => ClientPlanTier::Economic->maxStructures(),
             'access_url' => $data->accessUrl,
             'is_active' => $data->isActive,
+            'lifecycle' => ClientLifecycle::Active,
         ]);
     }
 
     private function assertWithinQuota(SecurityCompany $company): void
     {
         $maxClients = (int) ($company->max_clients ?: 10);
-        $current = $company->clients()->count();
+        $current = $company->operationalClientsCount();
 
         if ($current >= $maxClients) {
             throw ValidationException::withMessages([

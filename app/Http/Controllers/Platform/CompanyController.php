@@ -37,7 +37,10 @@ final class CompanyController extends Controller
     {
         abort_unless(auth()->user()?->can('platform.companies.view'), 403);
 
-        $company->loadCount('clients');
+        $company->loadCount('clients')
+            ->loadCount([
+                'clients as operational_clients_count' => fn ($q) => $q->where('lifecycle', \App\Enums\ClientLifecycle::Active),
+            ]);
         $packageOptions = CompanyPackageSku::options();
         $cycleOptions = BillingCycle::options();
 

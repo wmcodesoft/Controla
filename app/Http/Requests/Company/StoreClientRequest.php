@@ -35,6 +35,7 @@ final class StoreClientRequest extends FormRequest
                 'regex:/^[a-z0-9][a-z0-9\-\.]+$/i',
                 Rule::unique('clients', 'login_suffix')->where('security_company_id', $companyId),
             ],
+            'address' => ['nullable', 'string', 'max:255'],
             'access_url' => ['nullable', 'url', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
         ];

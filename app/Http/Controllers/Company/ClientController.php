@@ -26,13 +26,83 @@ final class ClientController extends Controller
 
     public function index(Request $request): View
     {
-        $this->authorize('viewAny', Client::class);
+        $operateMode = $request->query('modo') === 'operar';
+        $user = $request->user();
+        $search = $request->string('q')->trim()->toString();
+        $status = $request->string('status')->toString();
 
-        $companyId = $this->companyId($request);
-        $clients = $this->clientRepository->paginateForCompany($companyId);
-        $metrics = $this->clientRepository->metricsForCompany($companyId);
+        if ($operateMode) {
+            abort_unless($user?->can('access.dashboard'), 403);
+            if (! in_array($status, ['active', 'inactive'], true)) {
+                $status = 'active';
+            }
+        } else {
+            $this->authorize('viewAny', Client::class);
+            if (! in_array($status, ['active', 'inactive'], true)) {
+                $status = 'all';
+            }
+        }
 
-        return view('modules.company.clients.index', compact('clients', 'metrics'));
+        if ($user->hasRole('super-admin')) {
+            abort_unless($operateMode, 403, 'Use el panel de plataforma para gestionar empresas.');
+
+            $clients = $this->clientRepository->paginateOperableForUser(
+                $user,
+                15,
+                $search !== '' ? $search : null,
+                $status,
+            );
+
+            return view('modules.company.clients.index', [
+                'clients' => $clients,
+                'metrics' => null,
+                'search' => $search,
+                'status' => $status,
+                'operateMode' => true,
+            ]);
+        }
+
+        if ($user->hasRole('company-admin') && $user->security_company_id) {
+            $companyId = (int) $user->security_company_id;
+
+            if ($operateMode && $status === 'all') {
+                $status = 'active';
+            }
+
+            $clients = $this->clientRepository->paginateForCompany(
+                $companyId,
+                15,
+                $search !== '' ? $search : null,
+                $status !== 'all' ? $status : null,
+            );
+            $metrics = $this->clientRepository->metricsForCompany($companyId);
+
+            return view('modules.company.clients.index', compact(
+                'clients',
+                'metrics',
+                'search',
+                'status',
+            ) + ['operateMode' => $operateMode]);
+        }
+
+        if ($operateMode) {
+            $clients = $this->clientRepository->paginateOperableForUser(
+                $user,
+                15,
+                $search !== '' ? $search : null,
+                $status,
+            );
+
+            return view('modules.company.clients.index', [
+                'clients' => $clients,
+                'metrics' => null,
+                'search' => $search,
+                'status' => $status,
+                'operateMode' => true,
+            ]);
+        }
+
+        abort(403);
     }
 
     public function create(Request $request): View|RedirectResponse
@@ -60,6 +130,7 @@ final class ClientController extends Controller
             name: $request->validated('name'),
             slug: $request->validated('slug'),
             loginSuffix: $request->validated('login_suffix'),
+            address: $request->validated('address'),
             accessUrl: $request->validated('access_url'),
             isActive: $request->boolean('is_active', true),
         ));
@@ -99,19 +170,6 @@ final class ClientController extends Controller
         return redirect()
             ->route('company.clients.show', $client)
             ->with('success', 'Cliente actualizado.');
-    }
-
-    public function select(Request $request): View
-    {
-        $user = $request->user();
-
-        $clients = $user->hasRole('super-admin')
-            ? $this->clientRepository->activeAll()
-                ->filter(fn (Client $client) => $user->can('operate', $client))
-            : $this->clientRepository->activeForCompany((int) $user->security_company_id)
-                ->filter(fn (Client $client) => $user->can('operate', $client));
-
-        return view('modules.company.clients.select', compact('clients'));
     }
 
     public function activate(Request $request, Client $client): RedirectResponse

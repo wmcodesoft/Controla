@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Enums\ClientLifecycle;
 use App\Models\Client;
 use App\Models\SecurityCompany;
 use App\Models\User;
@@ -37,6 +38,9 @@ final class SecurityCompanyRepository
     {
         return SecurityCompany::query()
             ->withCount('clients')
+            ->withCount([
+                'clients as operational_clients_count' => fn ($q) => $q->where('lifecycle', ClientLifecycle::Active),
+            ])
             ->orderBy('trade_name')
             ->paginate($perPage);
     }

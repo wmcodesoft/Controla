@@ -42,7 +42,12 @@ final class AssignCompanyPackageService
             'package_price_annual' => $quote->priceAnnual,
             'package_starts_at' => $startsAt,
             'package_ends_at' => $endsAt,
+            'grace_ends_at' => null,
+            'suspended_at' => null,
+            'archived_at' => null,
+            'archive_reason' => null,
             'subscription_status' => SubscriptionStatus::Active,
+            'is_active' => true,
         ]);
 
         return $company->fresh();

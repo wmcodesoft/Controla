@@ -45,6 +45,7 @@ final class UpdateClientRequest extends FormRequest
                     ->where('security_company_id', $companyId)
                     ->ignore($client->id),
             ],
+            'address' => ['nullable', 'string', 'max:255'],
             'access_url' => ['nullable', 'url', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
         ];

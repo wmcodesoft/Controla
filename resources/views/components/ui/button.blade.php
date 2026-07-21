@@ -14,6 +14,7 @@
     $variantClasses = match ($variant) {
         'secondary' => 'border border-slate-700 text-slate-200 hover:bg-slate-800',
         'success' => 'bg-emerald-600 text-white hover:bg-emerald-500',
+        'platform' => 'bg-violet-600 text-white hover:bg-violet-500',
         default => 'bg-indigo-600 text-white hover:bg-indigo-500',
     };
 

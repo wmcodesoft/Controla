@@ -4,21 +4,79 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Enums\ClientLifecycle;
 use App\Models\Client;
 use App\Models\SecurityCompany;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 final class ClientRepository
 {
-    public function paginateForCompany(int $companyId, int $perPage = 15): LengthAwarePaginator
-    {
-        return Client::query()
+    public function paginateOperableForUser(
+        User $user,
+        int $perPage = 15,
+        ?string $search = null,
+        ?string $status = null,
+    ): LengthAwarePaginator {
+        $query = Client::query()
+            ->whereIn('id', $user->assignedClientIds())
+            ->with(['securityCompany'])
+            ->withCount('assignments');
+
+        if ($status === 'active') {
+            $query->where('is_active', true);
+        } elseif ($status === 'inactive') {
+            $query->where('is_active', false);
+        } else {
+            $query->where('is_active', true);
+        }
+
+        if ($search !== null && $search !== '') {
+            $term = '%'.$search.'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)
+                    ->orWhere('slug', 'like', $term)
+                    ->orWhere('address', 'like', $term);
+            });
+        }
+
+        return $query
+            ->orderBy('name')
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
+    public function paginateForCompany(
+        int $companyId,
+        int $perPage = 15,
+        ?string $search = null,
+        ?string $status = null,
+    ): LengthAwarePaginator {
+        $query = Client::query()
             ->where('security_company_id', $companyId)
             ->with(['securityCompany'])
-            ->withCount('assignments')
+            ->withCount('assignments');
+
+        if ($search !== null && $search !== '') {
+            $term = '%'.$search.'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)
+                    ->orWhere('slug', 'like', $term)
+                    ->orWhere('address', 'like', $term);
+            });
+        }
+
+        if ($status === 'active') {
+            $query->where('is_active', true);
+        } elseif ($status === 'inactive') {
+            $query->where('is_active', false);
+        }
+
+        return $query
             ->orderBy('name')
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findForCompany(int $clientId, int $companyId): ?Client
@@ -81,9 +139,9 @@ final class ClientRepository
     {
         $company = SecurityCompany::query()->findOrFail($companyId);
         $base = Client::query()->where('security_company_id', $companyId);
-        $total = (clone $base)->count();
-        $active = (clone $base)->where('is_active', true)->count();
-        $inactive = (clone $base)->where('is_active', false)->count();
+        $total = (clone $base)->where('lifecycle', ClientLifecycle::Active)->count();
+        $active = (clone $base)->where('lifecycle', ClientLifecycle::Active)->where('is_active', true)->count();
+        $inactive = $total - $active;
         $maxClients = (int) ($company->max_clients ?: 0);
         $usageRatio = $maxClients > 0 ? round(($total / $maxClients) * 100, 1) : 0.0;
         $features = $company->package_modality?->features() ?? [];
@@ -102,7 +160,7 @@ final class ClientRepository
             'active' => $active,
             'inactive' => $inactive,
             'max_clients' => $maxClients,
-            'clients_remaining' => max(0, $maxClients - $total),
+            'clients_remaining' => $company->clientsRemaining(),
             'usage_ratio' => $usageRatio,
             'package_sku' => $company->package_sku?->value,
             'package_label' => $company->packageLabel(),

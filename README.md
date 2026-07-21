@@ -20,8 +20,10 @@ Plataforma SaaS B2B de **control de accesos y vigilancia** para empresas de segu
 | **4** | API REST (Sanctum) + Portal Residente web | ✅ Implementada |
 | **Comercial** | Paquetes empresa + tabla de precios + facturación mensual/anual | ✅ Implementada |
 | **UI Empresa** | Design system `x-ui.*`, dashboard licencia + cartera, nav Portería/Conjunto | ✅ Implementada (v1) |
+| **UI Plataforma** | Dashboard cartera, archivo/retiro, design system violet | ✅ Implementada (v1) |
+| **Ciclo comercial** | Gracia, suspensión, archivo, purga retención legal | ✅ Implementada |
 
-Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md) · [`docs/MODELO-COMERCIAL-PAQUETES.md`](docs/MODELO-COMERCIAL-PAQUETES.md) · [**Diseño UI panel empresa**](docs/DISENO-UI-CONTROLA.md)
+Documentación detallada: [`docs/PLAN-INICIO-PROYECTO-CONTROLA.md`](docs/PLAN-INICIO-PROYECTO-CONTROLA.md) · [`docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md`](docs/REFERENCIA-PLATAFORMA-CONTROL-ACCESOS.md) · [`docs/MODELO-COMERCIAL-PAQUETES.md`](docs/MODELO-COMERCIAL-PAQUETES.md) · [**Diseño UI**](docs/DISENO-UI-CONTROLA.md) · [**Panel Plataforma**](docs/PLATAFORMA-ADMIN.md)
 
 ---
 
@@ -205,23 +207,36 @@ Ciclo **anual**: total mensual × 12 × (1 − 17%). El súper admin solo edita 
 
 ### Panel Plataforma (`/admin`)
 
+Documentación completa: [`docs/PLATAFORMA-ADMIN.md`](docs/PLATAFORMA-ADMIN.md)
+
 | Ruta | Función |
 |------|---------|
-| `GET /admin/dashboard` | KPIs globales + anclas de precio |
+| `GET /admin/dashboard` | Cartera viva: alertas, árbol empresa→conjuntos, vista global, archivo/retiro |
+| `POST /admin/companies/{id}/archive` | Archivar empresa (cascada a clientes) |
+| `POST /admin/companies/{id}/clients/{client}/release` | Retirar conjunto y liberar cupo |
 | `GET /admin/pricing` | Tabla de precios (editar unitarios, matriz calculada) |
 | `PUT /admin/pricing` | Guardar unitarios manual/hardware |
-| `GET /admin/companies` | Listado empresas + cupo/paquete/ciclo |
+| `GET /admin/companies` | Listado empresas + cupo operativo/paquete/ciclo |
 | `GET /admin/companies/{id}` | Detalle y cambio de paquete + ciclo |
 | `PUT /admin/companies/{id}/package` | Asignar SKU comercial y facturación |
+
+**Ciclo comercial:** gracia → suspensión → archivo (`subscriptions:process-lifecycle`, diario 02:00).
+
+**Retención legal:** purga datos operativos tras 365 días y anonimización comercial tras 5 años (`data:purge-retention`, mensual día 1 03:00). Config: `config/retention.php`.
+
+**Cupo:** solo `lifecycle = active` consume slot (`operationalClientsCount()`).
 
 ### Panel Empresa (`/company`)
 
 | Ruta | Función |
 |------|---------|
 | `GET /company/dashboard` | Licencia: cupo, ciclo, precio, upgrades sugeridos |
-| `GET /company/clients` | Listado de clientes (modalidad heredada de empresa) |
+| `GET /company/clients` | Cartera de conjuntos (búsqueda, dirección, operar) |
+| `GET /company/clients?modo=operar` | Modo portería: elegir conjunto y entrar |
+| `GET /company/porteria` | Entrada inteligente a portería (auto si hay 1 conjunto) |
 | `POST /company/clients` | Alta de cliente (bloqueada si cupo lleno) |
-| `GET /company/clients/select` | Selección de conjunto para operar portería |
+
+`/company/clients/select` redirige a `/company/porteria` (vista eliminada).
 
 ### Diseño UI — Panel Empresa (`/company`)
 
@@ -229,15 +244,24 @@ Sistema visual unificado para el shell y formularios del panel empresa. **Guía 
 
 | Elemento | Detalle |
 |----------|---------|
-| Layout | `resources/views/layouts/company.blade.php` — header con título, empresa, **Portería** y **+ Conjunto**; sidebar con cierre de sesión al pie |
+| Layout | `resources/views/layouts/company.blade.php` — header con título, empresa, **Portería** y **+ Conjunto**; sidebar Resumen + Clientes |
 | Dashboard | Franja de licencia, tabla de conjuntos (protagonista) y panel lateral **Cuenta** (ciclo, ampliar cupo, features) |
 | Componentes | `x-ui.button`, `x-ui.label`, `x-ui.input`, `x-ui.field-error` en `resources/views/components/ui/` |
 | Contexto cupo | `CompanyLayoutComposer` inyecta `companyContext` en el layout |
-| Vistas migradas | `company/dashboard`, `company/clients/create`, `company/clients/edit` |
+| Vistas migradas | `company/dashboard`, `company/clients/index`, `company/clients/create`, `company/clients/edit` |
 
-Variantes de botón: `primary` (indigo), `secondary`, `success` (emerald). Tamaños: `sm`, `md`.
+Variantes de botón: `primary` (indigo), `secondary`, `success` (emerald), `platform` (violet en `/admin`). Tamaños: `sm`, `md`.
 
-**Pendiente migración:** `company/clients/index`, `show`, `select` y paneles admin/access/client con acentos propios (violet/teal).
+**Pendiente migración:** `company/clients/show` y paneles conjunto/portería con acentos propios (teal/indigo).
+
+### Diseño UI — Panel Plataforma (`/admin`)
+
+| Elemento | Detalle |
+|----------|---------|
+| Layout | `resources/views/layouts/admin.blade.php` — sidebar violet, header con Precios/Empresas |
+| Dashboard | Alertas, árbol colapsable, vista global, acciones archivar/retirar |
+| Componentes | Mismos `x-ui.*` con `variant="platform"` y `accent="platform"` en inputs |
+| Vistas migradas | `admin/dashboard`, `admin/companies/*`, `admin/pricing/edit` |
 
 ---
 
@@ -364,6 +388,7 @@ Suites relevantes:
 - `tests/Feature/Tenancy/TenantIsolationTest.php`
 - `tests/Feature/Structure/StructureModuleTest.php`
 - `tests/Feature/Platform/PlatformDashboardTest.php`
+- `tests/Unit/Platform/DataRetentionPurgeTest.php`
 - `tests/Feature/Auth/LoginCsrfTest.php`
 - `tests/Unit/Pricing/PriceCalculatorTest.php`
 
@@ -422,7 +447,8 @@ app/
 ├── Models/PricingSettings.php      # Unitarios editables por súper admin
 ├── Repositories/
 ├── Services/Pricing/               # PriceCalculator, UpdatePlatformPricingService
-├── Services/Tenant/                # AssignCompanyPackageService, CreateClientService
+├── Services/Platform/              # Dashboard, archivo, retiro, lifecycle, purga retención
+├── Services/Tenant/                # AssignCompanyPackageService, CreateClientService, EnterPorteriaService
 ├── Policies/
 ├── View/Components/
 ├── View/Composers/CompanyLayoutComposer.php
@@ -446,6 +472,8 @@ routes/api.php                   # Sanctum endpoints
 
 ```bash
 php artisan migrate                         # aplicar migraciones nuevas
+php artisan subscriptions:process-lifecycle # gracia → suspensión → archivo (también programado diario)
+php artisan data:purge-retention            # purga censo post-retención (también programado mensual)
 php artisan db:seed                         # datos demo (aditivo, todos los seeders)
 php artisan db:seed --class=RoleAndPermissionSeeder  # sincronizar permisos tras cambios en config/access.php
 php artisan db:seed --class=DemoUsersSeeder # solo usuarios demo

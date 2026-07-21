@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\ClientLifecycle;
 use App\Models\Client;
 use App\Models\User;
 
@@ -47,6 +48,7 @@ final class ClientPolicy
     public function operate(User $user, Client $client): bool
     {
         return $user->canAccessClient((int) $client->id)
-            && $client->is_active;
+            && $client->is_active
+            && $client->lifecycle === ClientLifecycle::Active;
     }
 }

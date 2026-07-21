@@ -15,7 +15,6 @@
             || request()->routeIs('company.clients.show')
             || request()->routeIs('company.clients.create')
             || request()->routeIs('company.clients.edit');
-        $onPorteria = request()->routeIs('company.clients.select');
         $companyContext = $companyContext ?? ['company_name' => null, 'is_quota_full' => true];
     @endphp
     <div class="min-h-screen flex">
@@ -35,12 +34,6 @@
                 <a href="{{ route('company.clients.index') }}"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ $onClientsCrud ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
                     <span>Clientes</span>
-                </a>
-                @endcan
-                @can('access.dashboard')
-                <a href="{{ route('company.clients.select') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium {{ $onPorteria ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }}">
-                    <span>Consola portería</span>
                 </a>
                 @endcan
             </nav>
@@ -70,7 +63,7 @@
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                         @can('access.dashboard')
-                            <x-ui.button variant="secondary" :href="route('company.clients.select')">
+                            <x-ui.button variant="secondary" :href="route('company.porteria.enter')">
                                 Portería
                             </x-ui.button>
                         @endcan

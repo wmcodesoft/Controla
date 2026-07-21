@@ -1,10 +1,12 @@
-# Diseño UI — Controla (Panel Empresa v1)
+# Diseño UI — Controla
 
-Referencia oficial del sistema visual implementado en el **panel empresa** (`/company`). Usar este documento al migrar o crear vistas.
+Referencia oficial del sistema visual. **Panel empresa** (`/company`, acento indigo) y **panel plataforma** (`/admin`, acento violet).
 
-**Vista canónica (implementada):** `resources/views/modules/company/dashboard.blade.php`  
-**Layout shell:** `resources/views/layouts/company.blade.php`  
-**Mockup interactivo:** `canvases/company-dashboard-nav-mockup.canvas.tsx` (Cursor)
+**Vistas canónicas:**
+- Empresa: `resources/views/modules/company/dashboard.blade.php`
+- Plataforma: `resources/views/modules/admin/dashboard.blade.php`
+
+**Layouts:** `layouts/company.blade.php` · `layouts/admin.blade.php`
 
 ---
 
@@ -34,7 +36,7 @@ Referencia oficial del sistema visual implementado en el **panel empresa** (`/co
 ### Ejemplo acciones header
 
 ```blade
-<x-ui.button variant="secondary" :href="route('company.clients.select')">Portería</x-ui.button>
+<x-ui.button variant="secondary" :href="route('company.porteria.enter')">Portería</x-ui.button>
 <x-ui.button :href="route('company.clients.create')">+ Conjunto</x-ui.button>
 ```
 
@@ -72,7 +74,7 @@ Fuente: **Figtree** (`font-sans`). Base operativa: **14px** (`text-sm`).
 
 | Prop | Valores | Default |
 |------|---------|---------|
-| `variant` | `primary`, `secondary`, `success` | `primary` |
+| `variant` | `primary`, `secondary`, `success`, `platform` | `primary` |
 | `size` | `sm`, `md` | `sm` |
 | `href` | URL opcional (renderiza `<a>`) | — |
 | `type` | `button`, `submit`, `reset` | `button` |
@@ -91,6 +93,7 @@ Fuente: **Figtree** (`font-sans`). Base operativa: **14px** (`text-sm`).
 | **primary** | `bg-indigo-600 text-white hover:bg-indigo-500` | CTA principal (+ Conjunto, Solicitar ampliación) |
 | **secondary** | `border border-slate-700 text-slate-200 hover:bg-slate-800` | Acción secundaria (Portería) |
 | **success** | `bg-emerald-600 text-white hover:bg-emerald-500` | Upsell ahorro (licencia anual) |
+| **platform** | `bg-violet-600 text-white hover:bg-violet-500` | Panel plataforma (`/admin`) |
 
 **Forma:** `rounded-lg` · `inline-flex items-center justify-center`
 
@@ -113,12 +116,19 @@ block text-xs font-medium text-slate-400 mb-1
 
 ### Input (`x-ui.input`)
 
+| Prop | Valores | Default |
+|------|---------|---------|
+| `accent` | `indigo`, `platform` | `indigo` |
+
 ```
 w-full h-9 px-3 text-sm rounded-lg
 border border-slate-700 bg-slate-950 text-white
 placeholder:text-slate-600
-focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30
+focus:ring-1
 ```
+
+- Empresa: `focus:border-indigo-500 focus:ring-indigo-500/30`
+- Plataforma: `accent="platform"` → `focus:border-violet-500 focus:ring-violet-500/30`
 
 ### Error (`x-ui.field-error`)
 
@@ -261,16 +271,16 @@ warning: rounded-lg bg-amber-900/40 border border-amber-700 text-amber-200 px-4 
 
 ---
 
-## 10. Acentos por panel (futuro)
+## 10. Acentos por panel
 
 | Panel | Acento primary | Estado migración |
 |-------|----------------|------------------|
 | Empresa (`/company`) | `indigo` | ✅ Referencia actual |
-| Plataforma (`/admin`) | `violet` | Pendiente |
+| Plataforma (`/admin`) | `violet` | ✅ Dashboard, empresas, pricing |
 | Conjunto (`/client`) | `teal` | Pendiente |
 | Portería (`/access`) | `indigo` | Pendiente |
 
-Al migrar admin/client/access: duplicar patrones de este doc cambiando solo el color acento en botones, focus de inputs y nav activo.
+Al migrar client/access: duplicar patrones de este doc cambiando solo el color acento en botones, focus de inputs y nav activo.
 
 ---
 
@@ -293,10 +303,42 @@ Al migrar admin/client/access: duplicar patrones de este doc cambiando solo el c
 | `company/dashboard` | ✅ Referencia completa |
 | `company/clients/create` | ✅ Formulario UI |
 | `company/clients/edit` | ✅ Formulario UI |
-| `company/clients/index` | Pendiente |
+| `company/clients/index` | ✅ Cartera + modo `?modo=operar` |
 | `company/clients/show` | Pendiente |
-| `company/clients/select` | Pendiente |
+| `company/clients/select` | ❌ Eliminada — unificada en `index?modo=operar` + `company.porteria.enter` |
 
 ---
 
-*Última actualización: julio 2026 — alineado con resumen empresa aprobado.*
+## 13. Panel plataforma (`/admin`) — violet
+
+**Layout:** `resources/views/layouts/admin.blade.php`  
+**Documentación funcional:** [`docs/PLATAFORMA-ADMIN.md`](PLATAFORMA-ADMIN.md)
+
+### Shell
+
+| Elemento | Detalle |
+|----------|---------|
+| Contenedor main | `max-w-[1600px]`, `flex flex-col min-h-0` para paneles con scroll interno |
+| Sidebar nav activo | `bg-violet-600 text-white` |
+| Header acciones | `x-ui.button variant="platform"` (Empresas) y `secondary` (Precios) |
+| Links tabla | `text-xs text-violet-400 hover:text-violet-300` |
+
+### Vistas migradas
+
+| Vista | Estado |
+|-------|--------|
+| `admin/dashboard` | ✅ Árbol, alertas, vista global, acciones archivo/retiro |
+| `admin/companies/index` | ✅ Tabla cartera + badges alerta |
+| `admin/companies/show` | ✅ Paquete + formulario `x-ui.*` |
+| `admin/pricing/edit` | ✅ Unitarios + matriz calculada |
+
+### Select nativo (sin componente aún)
+
+```
+w-full h-9 px-3 text-sm rounded-lg border border-slate-700 bg-slate-950 text-white
+focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30
+```
+
+---
+
+*Última actualización: julio 2026 — paneles empresa y plataforma.*

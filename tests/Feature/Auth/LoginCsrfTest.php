@@ -43,16 +43,15 @@ final class LoginCsrfTest extends TestCase
         $response->assertSee('Panel de plataforma');
     }
 
-    public function test_super_admin_can_operate_porteria_via_client_select(): void
+    public function test_super_admin_can_operate_porteria_via_porteria_entry(): void
     {
         $this->seed();
 
         $user = User::query()->where('email', 'admin@control-acceso.test')->first();
         $client = \App\Models\Client::query()->where('slug', 'palmas-del-ingenio')->first();
 
-        $response = $this->actingAs($user)->get(route('company.clients.select'));
-        $response->assertOk();
-        $response->assertSee('Palmas del Ingenio');
+        $response = $this->actingAs($user)->get(route('company.porteria.enter'));
+        $response->assertRedirect(route('company.clients.index', ['modo' => 'operar']));
 
         $response = $this->actingAs($user)->post(route('company.clients.activate', $client));
         $response->assertRedirect(route('access.dashboard'));

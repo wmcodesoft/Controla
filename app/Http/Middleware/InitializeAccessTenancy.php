@@ -47,7 +47,7 @@ final class InitializeAccessTenancy
                 $request->session()->put($sessionKey, $allowedIds[0]);
             } else {
                 return redirect()
-                    ->route('company.clients.select')
+                    ->route('company.clients.index', ['modo' => 'operar'])
                     ->with('warning', 'Selecciona el conjunto en el que vas a operar.');
             }
         }

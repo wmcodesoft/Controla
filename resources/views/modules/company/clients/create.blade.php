@@ -34,6 +34,12 @@
             </div>
 
             <div>
+                <x-ui.label for="address">Dirección del conjunto</x-ui.label>
+                <x-ui.input id="address" type="text" name="address" :value="old('address')" placeholder="Calle, ciudad" />
+                <x-ui.field-error :messages="$errors->get('address')" />
+            </div>
+
+            <div>
                 <x-ui.label for="access_url">URL acceso (opcional)</x-ui.label>
                 <x-ui.input id="access_url" type="url" name="access_url" :value="old('access_url')" />
             </div>

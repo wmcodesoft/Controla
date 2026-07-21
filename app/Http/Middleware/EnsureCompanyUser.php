@@ -26,6 +26,12 @@ final class EnsureCompanyUser
             return $next($request);
         }
 
+        if ($request->routeIs('company.clients.index') && $request->query('modo') === 'operar') {
+            if ($user->can('access.dashboard') && count($user->assignedClientIds()) > 0) {
+                return $next($request);
+            }
+        }
+
         abort(403, 'Acceso restringido al panel de empresa.');
     }
 }

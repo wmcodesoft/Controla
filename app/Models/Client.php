@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ClientLifecycle;
 use App\Enums\ClientPlanTier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,11 +21,16 @@ class Client extends Model
         'name',
         'slug',
         'login_suffix',
+        'address',
         'plan_tier',
         'max_structures',
         'logo_path',
         'access_url',
         'is_active',
+        'lifecycle',
+        'released_at',
+        'archived_at',
+        'tenant_data_purged_at',
     ];
 
     protected function casts(): array
@@ -33,6 +39,10 @@ class Client extends Model
             'plan_tier' => ClientPlanTier::class,
             'max_structures' => 'integer',
             'is_active' => 'boolean',
+            'lifecycle' => ClientLifecycle::class,
+            'released_at' => 'datetime',
+            'archived_at' => 'datetime',
+            'tenant_data_purged_at' => 'datetime',
         ];
     }
 

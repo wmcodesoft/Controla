@@ -15,6 +15,14 @@ Route::middleware(['auth', 'password.changed', 'active', 'platform.admin', 'tena
             ->middleware('permission:platform.dashboard')
             ->name('dashboard');
 
+        Route::post('/companies/{company}/archive', [DashboardController::class, 'archiveCompany'])
+            ->middleware('permission:platform.companies.manage')
+            ->name('companies.archive');
+
+        Route::post('/companies/{company}/clients/{client}/release', [DashboardController::class, 'releaseClient'])
+            ->middleware('permission:platform.companies.manage')
+            ->name('companies.clients.release');
+
         Route::get('/pricing', [PricingController::class, 'edit'])
             ->middleware('permission:platform.companies.view')
             ->name('pricing.edit');

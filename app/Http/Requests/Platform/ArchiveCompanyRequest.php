@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\Platform;
+
+use App\Enums\ArchiveReason;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+final class ArchiveCompanyRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return $this->user()?->can('platform.companies.manage') ?? false;
+    }
+
+    /** @return array<string, mixed> */
+    public function rules(): array
+    {
+        return [
+            'archive_reason' => ['required', Rule::enum(ArchiveReason::class)],
+        ];
+    }
+}

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ArchiveReason;
 use App\Enums\BillingCycle;
+use App\Enums\ClientLifecycle;
 use App\Enums\CompanyPackageSku;
 use App\Enums\PackageModality;
 use App\Enums\SubscriptionStatus;
@@ -37,6 +39,11 @@ class SecurityCompany extends Model
         'package_price_annual',
         'package_starts_at',
         'package_ends_at',
+        'grace_ends_at',
+        'suspended_at',
+        'archived_at',
+        'archive_reason',
+        'commercial_anonymized_at',
         'subscription_status',
     ];
 
@@ -56,6 +63,11 @@ class SecurityCompany extends Model
             'package_price_annual' => 'decimal:2',
             'package_starts_at' => 'datetime',
             'package_ends_at' => 'datetime',
+            'grace_ends_at' => 'datetime',
+            'suspended_at' => 'datetime',
+            'archived_at' => 'datetime',
+            'archive_reason' => ArchiveReason::class,
+            'commercial_anonymized_at' => 'datetime',
             'subscription_status' => SubscriptionStatus::class,
         ];
     }
@@ -91,7 +103,14 @@ class SecurityCompany extends Model
     {
         $max = (int) ($this->max_clients ?: 0);
 
-        return max(0, $max - $this->clients()->count());
+        return max(0, $max - $this->operationalClientsCount());
+    }
+
+    public function operationalClientsCount(): int
+    {
+        return $this->clients()
+            ->where('lifecycle', ClientLifecycle::Active)
+            ->count();
     }
 
     public function contractedAmount(): float
