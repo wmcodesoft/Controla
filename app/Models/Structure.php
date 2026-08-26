@@ -19,6 +19,7 @@ final class Structure extends Model
         'parent_id',
         'structure_type_id',
         'name',
+        'second_node_name',
         'code',
         'max_occupancy',
         'metadata',
@@ -71,6 +72,12 @@ final class Structure extends Model
 
     public function getFullPathAttribute(): string
     {
+        // Si tiene second_node_name, mostrar "Padre - Subnodo"
+        if ($this->second_node_name !== null && $this->parent !== null) {
+            return $this->parent->name . ' - ' . $this->second_node_name;
+        }
+
+        // Si es nodo raíz, mostrar solo su nombre
         $parts = [$this->name];
         $node = $this->parent;
 
