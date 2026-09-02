@@ -9,9 +9,11 @@ use App\Enums\CompanyPackageSku;
 use App\Enums\ManualPaymentIntent;
 use App\Enums\PaymentStatus;
 use App\Enums\PlatformDocumentType;
+use App\Enums\SupervisionPackageSku;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\CancelMembershipRequest;
 use App\Http\Requests\Company\SchedulePackageChangeRequest;
+use App\Http\Requests\Company\UpdateSupervisionPackageRequest;
 use App\Models\CommercialPayment;
 use App\Models\PlatformDocument;
 use App\Models\SecurityCompany;
@@ -19,6 +21,7 @@ use App\Services\Platform\CancelCompanyMembershipService;
 use App\Services\Platform\ScheduleCompanyPackageChangeService;
 use App\Services\Platform\UndoCompanyMembershipCancellationService;
 use App\Services\Pricing\PriceCalculator;
+use App\Services\Tenant\PurchaseCompanySupervisionPackageService;
 use App\Support\Platform\ActingCompanyResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,6 +33,7 @@ final class BillingController extends Controller
         private readonly CancelCompanyMembershipService $cancelCompanyMembershipService,
         private readonly UndoCompanyMembershipCancellationService $undoCompanyMembershipCancellationService,
         private readonly ScheduleCompanyPackageChangeService $scheduleCompanyPackageChangeService,
+        private readonly PurchaseCompanySupervisionPackageService $purchaseCompanySupervisionPackageService,
         private readonly PriceCalculator $priceCalculator,
     ) {}
 
@@ -90,6 +94,7 @@ final class BillingController extends Controller
             'quote' => $quote,
             'quoteAnnual' => $quoteAnnual,
             'packageOptions' => CompanyPackageSku::options(),
+            'supervisionOptions' => SupervisionPackageSku::options(),
             'cycleOptions' => BillingCycle::options(),
             'defaultCheckoutIntent' => $defaultCheckoutIntent,
             'gatewayDriver' => config('billing.gateway.driver'),
@@ -162,6 +167,36 @@ final class BillingController extends Controller
         }
 
         return redirect()->route('billing.checkout.show', $payment);
+    }
+
+    public function updateSupervisionPackage(UpdateSupervisionPackageRequest $request): RedirectResponse
+    {
+        $company = $this->resolveCompany($request);
+        $skuValue = $request->validated('supervision_package_sku');
+        $sku = $skuValue ? SupervisionPackageSku::from($skuValue) : null;
+
+        try {
+            $result = $this->purchaseCompanySupervisionPackageService->execute(
+                $company,
+                $request->user(),
+                $sku,
+            );
+        } catch (\InvalidArgumentException|\RuntimeException $e) {
+            return redirect()
+                ->route('company.billing.index')
+                ->withInput()
+                ->with('warning', $e->getMessage());
+        }
+
+        if ($result instanceof CommercialPayment) {
+            return redirect()->route('billing.checkout.show', $result);
+        }
+
+        $label = $sku?->label() ?? 'sin Supervisión Pro';
+
+        return redirect()
+            ->route('company.billing.index')
+            ->with('success', "Supervisión Pro actualizada: {$label}.");
     }
 
     private function resolveCompany(Request $request): SecurityCompany
