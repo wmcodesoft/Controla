@@ -9,7 +9,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
                     <a href="{{ route('client.structures.show', $node) }}" class="font-medium text-white hover:text-teal-300">
-                        {{ $node->name }}
+                        {{ $node->full_path }}
                     </a>
                     <p class="text-xs text-slate-500">{{ $node->structureType?->name }} @if($node->code)<span class="font-mono">· {{ $node->code }}</span>@endif</p>
                 </div>

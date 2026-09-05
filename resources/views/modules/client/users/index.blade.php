@@ -1,4 +1,15 @@
-<x-client-layout title="Usuarios portal">
+<x-client-layout title="Usuarios">
+    <x-slot:headerTabs>
+        <a href="{{ route('client.users.index') }}"
+           @class(['admin-header-tab', 'is-active' => request()->routeIs('client.users.*')])>
+            Portal
+        </a>
+        <a href="{{ route('client.app-users.index') }}"
+           @class(['admin-header-tab', 'is-active' => request()->routeIs('client.app-users.*')])>
+            App
+        </a>
+    </x-slot:headerTabs>
+
     <div class="max-w-5xl space-y-4">
         <div class="flex items-center justify-between gap-3">
             <div>
@@ -41,10 +52,5 @@
         </div>
 
         {{ $users->links() }}
-
-        <p class="text-xs text-slate-500">
-            Usuarios APP móvil del censo:
-            <a href="{{ route('client.app-users.index') }}" class="text-teal-400 hover:text-teal-300">Gestionar usuarios APP</a>
-        </p>
     </div>
 </x-client-layout>

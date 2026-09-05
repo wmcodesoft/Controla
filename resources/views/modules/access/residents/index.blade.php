@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                <h2 class="text-xl font-bold text-white">Residentes</h2>
+                <h2 class="text-xl font-bold text-white">Personas</h2>
             </div>
         </div>
     </div>
@@ -11,7 +11,7 @@
     @include('modules.access.partials.subnav')
 
     <div class="mt-6 flex justify-end">
-        <a href="{{ route('access.residents.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">Nuevo Residente</a>
+        <a href="{{ route('access.residents.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">Nueva Persona</a>
     </div>
 
     <div class="mt-4 bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
@@ -33,9 +33,11 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{{ $resident->document_type }} {{ $resident->document_number }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{{ $resident->full_name }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                        @foreach($resident->housingUnits as $hu)
-                            <span class="inline-block bg-slate-800 px-2 py-0.5 rounded text-xs text-slate-300">{{ $hu->building->name ?? '' }} {{ $hu->unit_number }}</span>
-                        @endforeach
+                        @if($resident->structure)
+                            <span class="inline-block bg-slate-800 px-2 py-0.5 rounded text-xs text-slate-300">{{ $resident->structure->full_path }}</span>
+                        @else
+                            <span class="text-slate-600">—</span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{{ ucfirst($resident->resident_type) }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{{ $resident->phone ?? '-' }}</td>
@@ -55,7 +57,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                         <a href="{{ route('access.residents.show', $resident) }}" class="text-blue-400 hover:text-blue-300 mr-2">Ver</a>
                         <a href="{{ route('access.residents.edit', $resident) }}" class="text-indigo-400 hover:text-indigo-300">Editar</a>
-                        <form action="{{ route('access.residents.destroy', $resident) }}" method="POST" class="inline ml-2" onsubmit="return confirm('¿Eliminar este residente?')">
+                        <form action="{{ route('access.residents.destroy', $resident) }}" method="POST" class="inline ml-2" onsubmit="return confirm('¿Eliminar esta persona?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-400">Eliminar</button>
                         </form>

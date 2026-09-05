@@ -57,7 +57,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-300">Residente (propietario residente)</label>
+                        <label class="block text-sm font-medium text-slate-300">Persona (propietario)</label>
                         <select name="resident_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">-- Ninguno --</option>
                             @foreach($residents as $r)

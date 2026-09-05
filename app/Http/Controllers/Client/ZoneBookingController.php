@@ -50,8 +50,8 @@ class ZoneBookingController extends Controller
 
         $resident = Resident::where('user_id', $user->id)->first();
 
-        if ($resident !== null) {
-            $units = $resident->housingUnits()->with('building')->get();
+        if ($resident !== null && $resident->structure) {
+            $units = collect([$resident->structure]);
         }
 
         return view('modules.client.zones.book', compact('zones', 'selectedZone', 'units'));
@@ -65,7 +65,7 @@ class ZoneBookingController extends Controller
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
             'people_count' => 'required|integer|min:1|max:100',
-            'housing_unit_id' => 'nullable|exists:housing_units,id',
+            'structure_id' => 'nullable|exists:structures,id',
             'notes' => 'nullable|string|max:500',
         ]);
 

@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Location;
 use App\Models\Visitor;
 use App\Models\Resident;
-use App\Models\HousingUnit;
+use App\Models\Structure;
 use App\Notifications\CorrespondenciaRecibida;
 use App\Services\Access\AuditLogger;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class CorrespondenceController extends Controller
 {
     public function index()
     {
-        $correspondence = Correspondence::with(['host', 'location', 'receiver', 'housingUnit.building', 'resident'])
+        $correspondence = Correspondence::with(['host', 'location', 'receiver', 'structure', 'resident'])
             ->latest('received_at')
             ->paginate(15);
 
@@ -28,9 +28,12 @@ class CorrespondenceController extends Controller
         $hosts = User::all();
         $locations = Location::where('is_active', true)->get();
         $visitors = Visitor::all();
-        $residents = Resident::where('is_active', true)->with('housingUnits.building')->get();
-        $housingUnits = HousingUnit::where('is_active', true)->with('building')->get();
-        return view('modules.access.correspondence.create', compact('hosts', 'locations', 'visitors', 'residents', 'housingUnits'));
+        $residents = Resident::where('is_active', true)->with('structure')->get();
+        $structures = Structure::where('is_active', true)
+            ->with('structureType', 'parent')
+            ->orderBy('name')
+            ->get();
+        return view('modules.access.correspondence.create', compact('hosts', 'locations', 'visitors', 'residents', 'structures'));
     }
 
     public function store(Request $request)
@@ -38,7 +41,7 @@ class CorrespondenceController extends Controller
         $validated = $request->validate([
             'visitor_id' => 'nullable|exists:visitors,id',
             'host_id' => 'nullable|exists:users,id',
-            'housing_unit_id' => 'nullable|exists:housing_units,id',
+            'structure_id' => 'nullable|exists:structures,id',
             'resident_id' => 'nullable|exists:residents,id',
             'location_id' => 'required|exists:locations,id',
             'carrier' => 'nullable|string|max:100',
@@ -60,7 +63,7 @@ class CorrespondenceController extends Controller
         }
 
         app(AuditLogger::class)->record($correspondence, 'correspondence.create', null, [
-            'housing_unit_id' => $correspondence->housing_unit_id,
+            'structure_id' => $correspondence->structure_id,
             'resident_id' => $correspondence->resident_id,
             'package_type' => $correspondence->package_type,
             'carrier' => $correspondence->carrier,
@@ -72,7 +75,7 @@ class CorrespondenceController extends Controller
 
     public function show(Correspondence $correspondence)
     {
-        $correspondence->load(['host', 'location', 'receiver', 'deliverer', 'visitor', 'housingUnit.building', 'resident']);
+        $correspondence->load(['host', 'location', 'receiver', 'deliverer', 'visitor', 'structure', 'resident']);
         return view('modules.access.correspondence.show', compact('correspondence'));
     }
 

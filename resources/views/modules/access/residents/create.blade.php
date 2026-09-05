@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                <h2 class="text-xl font-bold text-white">Nuevo Residente</h2>
+                <h2 class="text-xl font-bold text-white">Nueva Persona</h2>
             </div>
         </div>
     </div>
@@ -11,13 +11,17 @@
     <div class="bg-slate-900 rounded-xl border border-slate-800 p-6">
         <form method="POST" action="{{ route('access.residents.store') }}" x-data="{
             scanBuffer: '',
-            housingUnits: @json($housingUnitsData),
-            selectedUnitIds: [],
-            get selectedUnits() {
-                return this.housingUnits.filter(u => this.selectedUnitIds.includes(String(u.id)));
-            },
             handleScan() {
                 let parts = this.scanBuffer.trim().split(/[|\t]/);
+                if (parts.length < 5) return;
+                document.getElementById('document_type').value = 'CC';
+                document.getElementById('document_number').value = parts[0];
+                document.getElementById('last_name').value = (parts[1] || '') + ' ' + (parts[2] || '');
+                document.getElementById('first_name').value = (parts[3] || '') + ' ' + (parts[4] || '');
+                this.scanBuffer = '';
+            }
+        }">
+            @csrf
                 if (parts.length < 5) return;
                 let numero = parts[0], apellido1 = parts[1] || '', apellido2 = parts[2] || '';
                 let nombre1 = parts[3] || '', nombre2 = parts[4] || '';
@@ -85,7 +89,7 @@
                     <input type="email" name="email" value="{{ old('email') }}" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-300">Tipo Residente</label>
+                    <label class="block text-sm font-medium text-slate-300">Tipo Persona</label>
                     <select name="resident_type" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="propietario">Propietario</option>
                         <option value="inquilino">Inquilino</option>
@@ -104,21 +108,13 @@
 
             <div class="mt-6 pt-4 border-t border-slate-800">
                 <h3 class="text-lg font-semibold text-white mb-3">Asignación de Vivienda</h3>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-slate-300">Seleccionar Apartamento(s)</label>
-                    <select name="housing_units[]" multiple x-model="selectedUnitIds" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" size="5">
-                        <template x-for="unit in housingUnits" :key="unit.id">
-                            <option :value="unit.id" x-text="unit.building_name + ' - ' + unit.unit_number + ' (' + unit.type + ')'"></option>
-                        </template>
-                    </select>
-                </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-300">Vivienda Principal</label>
-                    <select name="primary_unit" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="">Ninguna</option>
-                        <template x-for="unit in selectedUnits" :key="unit.id">
-                            <option :value="unit.id" x-text="unit.building_name + ' - ' + unit.unit_number"></option>
-                        </template>
+                    <label class="block text-sm font-medium text-slate-300">Unidad / Estructura</label>
+                    <select name="structure_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">Sin asignar</option>
+                        @foreach($structures as $structure)
+                            <option value="{{ $structure->id }}" {{ old('structure_id') == $structure->id ? 'selected' : '' }}>{{ $structure->full_path }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>

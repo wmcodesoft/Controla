@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                <h2 class="text-xl font-bold text-white">Editar Residente</h2>
+                <h2 class="text-xl font-bold text-white">Editar Persona</h2>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                     <input type="email" name="email" value="{{ old('email', $resident->email) }}" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-300">Tipo Residente</label>
+                    <label class="block text-sm font-medium text-slate-300">Tipo Persona</label>
                     <select name="resident_type" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="propietario" {{ $resident->resident_type == 'propietario' ? 'selected' : '' }}>Propietario</option>
                         <option value="inquilino" {{ $resident->resident_type == 'inquilino' ? 'selected' : '' }}>Inquilino</option>

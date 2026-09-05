@@ -1,20 +1,6 @@
 @if(request()->routeIs('access.operations'))
-<div class="py-6">
+<div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        @can('access.dashboard')
-        <a href="{{ route('access.dashboard') }}" class="group relative bg-slate-900 rounded-xl border border-slate-800 hover:border-indigo-700 p-4 transition-all duration-200">
-            <div class="flex items-center space-x-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-indigo-900/50 rounded-lg flex items-center justify-center group-hover:bg-indigo-800/50 transition-colors">
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-indigo-300">Dashboard</p>
-                    <p class="text-xs text-slate-500">Resumen general del sistema</p>
-                </div>
-            </div>
-        </a>
-        @endcan
-
         @can('access.register.entry')
         <a href="{{ route('access.logs.index') }}" class="group relative bg-slate-900 rounded-xl border border-slate-800 hover:border-emerald-700 p-4 transition-all duration-200">
             <div class="flex items-center space-x-3">
@@ -50,36 +36,8 @@
                     <svg class="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-teal-300">Residentes</p>
+                    <p class="text-sm font-semibold text-white group-hover:text-teal-300">Personas</p>
                     <p class="text-xs text-slate-500">Personas que viven en el conjunto</p>
-                </div>
-            </div>
-        </a>
-        @endcan
-
-        @can('access.manage.housing_units')
-        <a href="{{ route('access.housing_units.index') }}" class="group relative bg-slate-900 rounded-xl border border-slate-800 hover:border-orange-700 p-4 transition-all duration-200">
-            <div class="flex items-center space-x-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-orange-900/50 rounded-lg flex items-center justify-center group-hover:bg-orange-800/50 transition-colors">
-                    <svg class="w-5 h-5 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-orange-300">Apartamentos</p>
-                    <p class="text-xs text-slate-500">Unidades de vivienda del conjunto</p>
-                </div>
-            </div>
-        </a>
-        @endcan
-
-        @can('access.manage.buildings')
-        <a href="{{ route('access.buildings.index') }}" class="group relative bg-slate-900 rounded-xl border border-slate-800 hover:border-slate-600 p-4 transition-all duration-200">
-            <div class="flex items-center space-x-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center group-hover:bg-slate-700 transition-colors">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-slate-300">Torres/Bloques</p>
-                    <p class="text-xs text-slate-500">Edificios del conjunto residencial</p>
                 </div>
             </div>
         </a>
@@ -107,7 +65,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-white group-hover:text-amber-300">Control Vehicular</p>
-                    <p class="text-xs text-slate-500">Ingreso/salida de vehículos de residentes</p>
+                    <p class="text-xs text-slate-500">Ingreso/salida de vehículos de personas</p>
                 </div>
             </div>
         </a>

@@ -10,6 +10,7 @@ use App\Enums\ClientLifecycle;
 use App\Enums\ManualPaymentIntent;
 use App\Enums\PaymentStatus;
 use App\Enums\PlatformDocumentType;
+use App\Enums\CompanyPackageSku;
 use App\Enums\SupervisionPackageSku;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Platform\CancelCompanyMembershipRequest;

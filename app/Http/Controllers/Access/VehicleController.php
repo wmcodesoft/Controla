@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Access;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccessLog;
 use App\Models\Vehicle;
 use App\Models\Visitor;
 use App\Models\Resident;
@@ -11,8 +12,24 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        $vehicles = Vehicle::with(['visitor', 'owner', 'resident'])->latest()->paginate(15);
-        return view('modules.access.vehicles.index', compact('vehicles'));
+        $vehicles = Vehicle::with(['visitor', 'owner', 'resident'])
+            ->whereNotNull('resident_id')
+            ->latest()
+            ->paginate(15);
+
+        $activeLogs = AccessLog::with(['vehicle', 'resident', 'visitor', 'location'])
+            ->whereIn('access_type', ['visitor_vehicle', 'resident_vehicle'])
+            ->where('status', 'active')
+            ->latest('entry_time')
+            ->get();
+
+        $todayLogs = AccessLog::with(['vehicle', 'resident', 'visitor', 'location'])
+            ->whereIn('access_type', ['visitor_vehicle', 'resident_vehicle'])
+            ->whereDate('entry_time', today())
+            ->latest('entry_time')
+            ->paginate(20);
+
+        return view('modules.access.vehicles.index', compact('vehicles', 'activeLogs', 'todayLogs'));
     }
 
     public function create()
@@ -97,5 +114,34 @@ class VehicleController extends Controller
             ->get(['id', 'plate', 'brand', 'model', 'color', 'type', 'visitor_id']);
 
         return response()->json($vehicles);
+    }
+
+    public function storeVisitorVehicle(Request $request)
+    {
+        $request->validate([
+            'plate' => 'required|string|max:20',
+            'color' => 'nullable|string|max:30',
+        ]);
+
+        $plate = strtoupper(trim($request->plate));
+        $clientId = (int) app(\App\Support\Tenancy\TenantContext::class)->clientId();
+
+        $vehicle = Vehicle::where('client_id', $clientId)
+            ->whereRaw('upper(plate) = ?', [$plate])
+            ->first();
+
+        if ($vehicle) {
+            return response()->json(['ok' => true, 'vehicle' => $vehicle]);
+        }
+
+        $vehicle = Vehicle::create([
+            'client_id' => $clientId,
+            'visitor_id' => $request->visitor_id ?? null,
+            'plate' => $plate,
+            'color' => $request->color ?? null,
+            'type' => 'carro',
+        ]);
+
+        return response()->json(['ok' => true, 'vehicle' => $vehicle, 'auto_created' => true]);
     }
 }

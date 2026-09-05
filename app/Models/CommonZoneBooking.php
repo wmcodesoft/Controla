@@ -10,7 +10,7 @@ class CommonZoneBooking extends Model
     use BelongsToClient;
 
     protected $fillable = [
-        'client_id', 'common_zone_id', 'user_id', 'housing_unit_id',
+        'client_id', 'common_zone_id', 'user_id', 'structure_id',
         'date', 'start_time', 'end_time', 'people_count',
         'status', 'qr_code', 'checked_in_at', 'cancelled_at', 'notes',
     ];
@@ -37,9 +37,9 @@ class CommonZoneBooking extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function housingUnit(): BelongsTo
+    public function structure(): BelongsTo
     {
-        return $this->belongsTo(HousingUnit::class);
+        return $this->belongsTo(Structure::class);
     }
 
     public function statusLabel(): string

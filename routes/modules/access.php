@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Access\DashboardController;
 use App\Http\Controllers\Access\LocationController;
 use App\Http\Controllers\Access\VisitorController;
 use App\Http\Controllers\Access\VehicleController;
@@ -12,32 +11,25 @@ use App\Http\Controllers\Access\GuardLogController;
 use App\Http\Controllers\Access\SupervisionController;
 use App\Http\Controllers\Access\SupervisionCodeController;
 use App\Http\Controllers\Access\ReportController;
-use App\Http\Controllers\Access\BuildingController;
-use App\Http\Controllers\Access\HousingUnitController;
 use App\Http\Controllers\Access\ResidentController;
 use App\Http\Controllers\Access\OperationsController;
+use App\Http\Controllers\Access\StructureController;
 use App\Http\Controllers\Access\BlocklistController;
 use App\Http\Controllers\Access\TurnoController;
 use App\Http\Controllers\Access\AuditController;
 use App\Http\Controllers\Access\ZoneController;
+use App\Http\Controllers\Access\PetController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->prefix('access')->name('access.')->group(function () {
     // Operations Hub
     Route::get('/operations', [OperationsController::class, 'index'])->name('operations');
 
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Structures
+    Route::get('/structures', [StructureController::class, 'index'])->name('structures.index');
 
     // Locations
     Route::resource('locations', LocationController::class)->except(['show']);
-
-    // Buildings (Torres/Bloques)
-    Route::resource('buildings', BuildingController::class)->except(['show']);
-
-    // Housing Units (Apartamentos/Casas)
-    Route::resource('housing_units', HousingUnitController::class)->except(['show']);
-    Route::get('housing_units/by-building/{building}', [HousingUnitController::class, 'searchByBuildingJson'])->name('housing_units.by_building');
 
     // Visitors
     Route::resource('visitors', VisitorController::class);
@@ -47,7 +39,7 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
     // Residents
     Route::resource('residents', ResidentController::class);
     Route::get('residents/search/json', [ResidentController::class, 'searchJson'])->name('residents.search.json');
-    Route::get('residents/housing-units/json', [ResidentController::class, 'searchHousingUnitsJson'])->name('residents.housing_units.json');
+    Route::get('residents/structures/json', [ResidentController::class, 'searchStructuresJson'])->name('residents.structures.json');
     Route::post('residents/{resident}/vehicles', [ResidentController::class, 'addVehicle'])->name('residents.vehicles.store');
     Route::delete('residents/{resident}/vehicles/{vehicle}', [ResidentController::class, 'removeVehicle'])->name('residents.vehicles.destroy');
 
@@ -55,6 +47,10 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
     Route::resource('vehicles', VehicleController::class)->except(['show']);
     Route::get('vehicles/search/json', [VehicleController::class, 'searchJson'])->name('vehicles.search.json');
     Route::get('vehicles/search/resident/json', [VehicleController::class, 'searchResidentVehicleJson'])->name('vehicles.search.resident.json');
+    Route::post('vehicles/visitor-vehicle', [VehicleController::class, 'storeVisitorVehicle'])->name('vehicles.visitor-vehicle');
+
+    // Pets
+    Route::resource('pets', PetController::class)->except(['edit', 'update']);
 
     // Vehicle Access (residentes/propietarios)
     Route::middleware('shift.open')->group(function () {
@@ -84,6 +80,8 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
     Route::post('/logs/scan-exit', [AccessLogController::class, 'scanExit'])
         ->middleware('shift.open')
         ->name('logs.scan-exit');
+    Route::get('/logs/lookup-document', [AccessLogController::class, 'lookupDocument'])
+        ->name('logs.lookup-document');
 
     // Pre-authorizations
     Route::resource('pre_authorizations', PreAuthorizationController::class)->except(['edit', 'update']);

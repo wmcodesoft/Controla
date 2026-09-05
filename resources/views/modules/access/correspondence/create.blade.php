@@ -22,7 +22,7 @@
                         <label class="relative cursor-pointer">
                             <input type="radio" x-model="assignType" value="resident" class="sr-only peer">
                             <div class="px-4 py-2 border-2 rounded-lg text-sm font-medium transition-all peer-checked:border-pink-500 peer-checked:bg-pink-900/30 peer-checked:text-pink-300 border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-600">
-                                Residente
+                                Persona
                             </div>
                         </label>
                         <label class="relative cursor-pointer">
@@ -43,7 +43,7 @@
                         @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div x-show="assignType === 'resident'">
-                                <label class="block text-sm font-medium text-slate-300">Residente</label>
+                                <label class="block text-sm font-medium text-slate-300">Persona</label>
                                 <select name="resident_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Seleccionar...</option>
                                     @foreach($residents as $r)
@@ -52,11 +52,11 @@
                                 </select>
                             </div>
                             <div x-show="assignType === 'apartment'">
-                                <label class="block text-sm font-medium text-slate-300">Apartamento/Casa</label>
-                                <select name="housing_unit_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                                <label class="block text-sm font-medium text-slate-300">Unidad (estructura)</label>
+                                <select name="structure_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Seleccionar...</option>
-                                    @foreach($housingUnits as $hu)
-                                    <option value="{{ $hu->id }}" {{ old('housing_unit_id') == $hu->id ? 'selected' : '' }}>{{ $hu->full_label }}</option>
+                                    @foreach($structures as $structure)
+                                    <option value="{{ $structure->id }}" {{ old('structure_id') == $structure->id ? 'selected' : '' }}>{{ $structure->full_path }}</option>
                                     @endforeach
                                 </select>
                             </div>

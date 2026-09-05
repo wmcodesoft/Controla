@@ -11,7 +11,7 @@ class Resident extends Model
     use BelongsToClient, HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'client_id', 'user_id', 'document_type', 'document_number', 'first_name', 'last_name',
+        'client_id', 'user_id', 'structure_id', 'document_type', 'document_number', 'first_name', 'last_name',
         'birth_date', 'blood_type', 'phone', 'email', 'photo_path', 'resident_type', 'is_active', 'notes',
     ];
 
@@ -28,11 +28,9 @@ class Resident extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function housingUnits()
+    public function structure()
     {
-        return $this->belongsToMany(HousingUnit::class, 'resident_housing_unit')
-            ->withPivot('is_primary', 'relationship_type')
-            ->withTimestamps();
+        return $this->belongsTo(Structure::class);
     }
 
     public function vehicles()
@@ -57,6 +55,6 @@ class Resident extends Model
 
     public function getPrimaryUnitAttribute()
     {
-        return $this->housingUnits()->wherePivot('is_primary', true)->first();
+        return $this->structure;
     }
 }

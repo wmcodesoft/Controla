@@ -27,7 +27,7 @@
                     </x-nav-link>
                     @endcan
                     @can('access.dashboard')
-                    <x-nav-link :href="route('access.dashboard')" :active="request()->routeIs('access.*')">
+                    <x-nav-link :href="route('access.operations')" :active="request()->routeIs('access.*')">
                         Control de Acceso
                     </x-nav-link>
                     @endcan
@@ -99,7 +99,7 @@
             </x-responsive-nav-link>
             @endcan
             @can('access.dashboard')
-            <x-responsive-nav-link :href="route('access.dashboard')" :active="request()->routeIs('access.*')">
+            <x-responsive-nav-link :href="route('access.operations')" :active="request()->routeIs('access.*')">
                 Control de Acceso
             </x-responsive-nav-link>
             @endcan

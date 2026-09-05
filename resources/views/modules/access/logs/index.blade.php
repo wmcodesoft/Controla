@@ -24,8 +24,6 @@
     </div>
 
     <div x-data="exitModal()">
-        @include('modules.access.partials.subnav')
-
         @if(session('success'))
         <div class="mt-6 rounded-lg bg-emerald-900/40 border border-emerald-700 text-emerald-200 px-4 py-3 text-sm flex items-center gap-2">
             <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -86,9 +84,15 @@
                         @php
                             $personName = $log->visitor?->full_name ?? $log->resident?->full_name ?? '-';
                             $personDoc = $log->visitor ? $log->visitor->document_type . ' ' . $log->visitor->document_number : ($log->resident ? $log->resident->document_type . ' ' . $log->resident->document_number : '-');
-                            $personType = $log->access_type == 'visitor_vehicle' ? 'Visit. Vehicular' : 'Visitante';
+                            if ($log->resident_id) {
+                                $personTypeLabel = str_contains($log->access_type, 'vehicle') ? 'Persona Vehicular' : 'Persona';
+                                $personTypeClass = 'bg-teal-900/30 text-teal-300 ring-teal-700';
+                            } else {
+                                $personTypeLabel = str_contains($log->access_type, 'vehicle') ? 'Visit. Vehicular' : 'Visitante';
+                                $personTypeClass = str_contains($log->access_type, 'vehicle') ? 'bg-cyan-900/30 text-cyan-300 ring-cyan-700' : 'bg-blue-900/30 text-blue-300 ring-blue-700';
+                            }
                             $hoursInside = $log->entry_time->diffInHours(now());
-                            $destination = $log->housingUnit?->full_label ?? $log->host?->name ?? '-';
+                            $destination = $log->structure?->full_path ?? $log->host?->name ?? '-';
                         @endphp
                         <tr class="hover:bg-slate-800/40 transition-colors {{ $log->alert_long_stay ? 'bg-red-900/20' : '' }}">
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -102,8 +106,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 {{ $personType == 'Visit. Vehicular' ? 'bg-cyan-900/30 text-cyan-300 ring-cyan-700' : 'bg-blue-900/30 text-blue-300 ring-blue-700' }}">
-                                    {{ $personType }}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 {{ $personTypeClass }}">
+                                    {{ $personTypeLabel }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{{ $personDoc }}</td>
@@ -290,6 +294,13 @@
                         @forelse($todayLogs as $log)
                         @php
                             $personName = $log->visitor?->full_name ?? $log->resident?->full_name ?? '-';
+                            if ($log->resident_id) {
+                                $todayTypeLabel = str_contains($log->access_type, 'vehicle') ? 'Persona Vehicular' : 'Persona';
+                                $todayTypeClass = 'bg-teal-900/30 text-teal-300 ring-teal-700';
+                            } else {
+                                $todayTypeLabel = str_contains($log->access_type, 'vehicle') ? 'Visit. Vehicular' : 'Visitante';
+                                $todayTypeClass = str_contains($log->access_type, 'vehicle') ? 'bg-cyan-900/30 text-cyan-300 ring-cyan-700' : 'bg-blue-900/30 text-blue-300 ring-blue-700';
+                            }
                         @endphp
                         <tr class="hover:bg-slate-800/40 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -303,8 +314,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 {{ $log->access_type == 'visitor_vehicle' ? 'bg-cyan-900/30 text-cyan-300 ring-cyan-700' : 'bg-blue-900/30 text-blue-300 ring-blue-700' }}">
-                                    {{ $log->access_type == 'visitor_vehicle' ? 'Visit. Vehicular' : 'Visitante' }}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 {{ $todayTypeClass }}">
+                                    {{ $todayTypeLabel }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{{ $log->entry_time->format('H:i') }}</td>

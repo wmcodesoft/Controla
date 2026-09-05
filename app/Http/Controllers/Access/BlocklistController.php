@@ -28,7 +28,7 @@ class BlocklistController extends Controller
         $types = [
             'visitor' => 'Visitante',
             'vehicle' => 'Vehículo',
-            'resident' => 'Residente',
+            'resident' => 'Persona',
         ];
 
         return view('modules.access.blocklist.create', compact('types'));

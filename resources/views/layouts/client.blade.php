@@ -29,7 +29,7 @@
                     @endcan
                 @endforeach
                 @can('access.dashboard')
-                <a href="{{ route('access.dashboard') }}"
+                <a href="{{ route('access.operations') }}"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 mt-4">
                     <span>Consola portería</span>
                 </a>
@@ -42,20 +42,28 @@
 
         <div class="flex-1 flex flex-col min-w-0 min-h-0 overflow-y-auto">
             @include('partials.operate-return-banner')
-            <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-10 shrink-0">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-                    <div>
-                        @isset($header)
-                            {{ $header }}
-                        @else
-                            <h2 class="text-xl font-semibold text-white">{{ $title ?? 'Panel Conjunto' }}</h2>
-                        @endisset
+            <header class="bg-slate-950 sticky top-0 z-10 shrink-0">
+                <div class="bg-slate-900/80 border-b border-slate-800 backdrop-blur">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+                        <div>
+                            @isset($header)
+                                {{ $header }}
+                            @else
+                                <h2 class="text-xl font-semibold text-white">{{ $title ?? 'Panel Conjunto' }}</h2>
+                            @endisset
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-sm text-slate-400 hover:text-white">Cerrar sesión</button>
+                        </form>
                     </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-sm text-slate-400 hover:text-white">Cerrar sesión</button>
-                    </form>
                 </div>
+
+                @isset($headerTabs)
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 -mt-px pt-0 pb-3">
+                        {{ $headerTabs }}
+                    </div>
+                @endisset
             </header>
 
             <x-ui.flash-toasts rail="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8" />

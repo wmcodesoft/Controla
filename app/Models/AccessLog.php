@@ -10,7 +10,7 @@ class AccessLog extends Model
     use BelongsToClient, HasFactory;
 
     protected $fillable = [
-        'client_id', 'visitor_id', 'user_id', 'resident_id', 'housing_unit_id', 'vehicle_id', 'host_id', 'location_id',
+        'client_id', 'visitor_id', 'user_id', 'resident_id', 'structure_id', 'vehicle_id', 'host_id', 'location_id',
         'authorized_by', 'access_type', 'entry_time', 'exit_time', 'status',
         'purpose', 'company_visited', 'screening_temp', 'qr_code', 'notes',
         'has_custody', 'custody_description', 'custody_receiver_name', 'custody_received_at',
@@ -42,9 +42,9 @@ class AccessLog extends Model
         return $this->belongsTo(Resident::class);
     }
 
-    public function housingUnit()
+    public function structure()
     {
-        return $this->belongsTo(HousingUnit::class);
+        return $this->belongsTo(Structure::class);
     }
 
     public function vehicle()

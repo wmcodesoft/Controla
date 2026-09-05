@@ -18,6 +18,7 @@ final class Structure extends Model
         'client_id',
         'parent_id',
         'structure_type_id',
+        'location_id',
         'name',
         'second_node_name',
         'code',
@@ -38,6 +39,11 @@ final class Structure extends Model
     public function structureType(): BelongsTo
     {
         return $this->belongsTo(StructureType::class);
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
     }
 
     public function parent(): BelongsTo
@@ -68,6 +74,16 @@ final class Structure extends Model
     public function authorizations(): HasMany
     {
         return $this->hasMany(VisitorPreAuthorization::class);
+    }
+
+    public function accessLogs(): HasMany
+    {
+        return $this->hasMany(AccessLog::class);
+    }
+
+    public function correspondence(): HasMany
+    {
+        return $this->hasMany(Correspondence::class);
     }
 
     public function getFullPathAttribute(): string

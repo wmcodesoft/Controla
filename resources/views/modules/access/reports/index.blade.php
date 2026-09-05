@@ -149,7 +149,7 @@
         </div>
         <div class="bg-slate-900 rounded-xl border border-slate-800 p-5">
             <h3 class="text-sm font-semibold text-white mb-1">Distribución por tipo</h3>
-            <p class="text-xs text-slate-500 mb-4">Visitantes vs vehiculares vs residentes</p>
+            <p class="text-xs text-slate-500 mb-4">Visitantes vs vehiculares vs personas</p>
             <div class="relative h-64 overflow-y-auto">
                 <canvas id="reportTypeChart"></canvas>
             </div>

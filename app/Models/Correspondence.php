@@ -13,7 +13,7 @@ class Correspondence extends Model
     protected $table = 'correspondence';
 
     protected $fillable = [
-        'client_id', 'visitor_id', 'host_id', 'location_id', 'housing_unit_id', 'resident_id',
+        'client_id', 'visitor_id', 'host_id', 'location_id', 'structure_id', 'resident_id',
         'carrier', 'courier_guide', 'package_type', 'received_at', 'received_by',
         'delivered_at', 'delivered_by', 'status', 'photo_path', 'notes',
     ];
@@ -41,9 +41,9 @@ class Correspondence extends Model
         return $this->belongsTo(Location::class);
     }
 
-    public function housingUnit()
+    public function structure()
     {
-        return $this->belongsTo(HousingUnit::class);
+        return $this->belongsTo(Structure::class);
     }
 
     public function resident()

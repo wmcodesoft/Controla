@@ -18,7 +18,7 @@
         <div class="mt-6 bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-800">
                 <h3 class="text-lg font-semibold text-white">Autorizaciones Registradas</h3>
-                <p class="text-sm text-slate-500 mt-0.5">Visitas pre-autorizadas por residentes y anfitriones</p>
+                <p class="text-sm text-slate-500 mt-0.5">Visitas pre-autorizadas por personas y anfitriones</p>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-800">

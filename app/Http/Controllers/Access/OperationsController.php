@@ -5,6 +5,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AccessLog;
 use App\Models\Correspondence;
 use App\Models\PreAuthorization;
+use App\Models\Visitor;
+use App\Models\Resident;
+use App\Models\Structure;
 
 class OperationsController extends Controller
 {
@@ -16,8 +19,10 @@ class OperationsController extends Controller
         $pendingPreAuthorizations = PreAuthorization::where('status', 'pending')
             ->whereDate('scheduled_date', '>=', today())
             ->count();
+        $totalVisitors = Visitor::count();
+        $totalResidents = Resident::count();
 
-        $peopleInside = AccessLog::with(['visitor', 'resident', 'housingUnit.building', 'location', 'vehicle', 'user'])
+        $peopleInside = AccessLog::with(['visitor', 'resident', 'structure', 'location', 'vehicle', 'user'])
             ->where('status', 'active')
             ->latest('entry_time')
             ->get()
@@ -32,17 +37,51 @@ class OperationsController extends Controller
                         ? $log->resident->document_type . ' ' . $log->resident->document_number
                         : '-');
                 $log->person_type = $log->access_type === 'visitor_vehicle' ? 'Visitante Vehicular'
-                    : ($log->access_type === 'resident_vehicle' ? 'Residente Vehicular'
-                    : ($log->access_type === 'resident' ? 'Residente' : 'Visitante'));
-                $log->destination = $log->housingUnit?->full_label
-                    ?? $log->housingUnit?->building?->name
-                    ?? '-';
+                    : ($log->access_type === 'resident_vehicle' ? 'Persona Vehicular'
+                    : ($log->access_type === 'resident' ? 'Persona' : 'Visitante'));
+                $log->destination = $log->structure?->full_path ?? '-';
                 return $log;
             });
 
+        $recentLogs = AccessLog::with(['visitor', 'resident', 'host', 'location'])
+            ->latest('entry_time')
+            ->take(10)
+            ->get();
+
+        // Chart data: daily entries for last 7 days
+        $dailyLabels = [];
+        $dailyData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dailyLabels[] = $date->format('D');
+            $dailyData[] = AccessLog::whereDate('entry_time', $date)->count();
+        }
+
+        // Chart data: access type distribution
+        $typeLabels = ['Visitante', 'Vehicular', 'Persona'];
+        $typeData = [
+            AccessLog::where('access_type', 'visitor')->count(),
+            AccessLog::where('access_type', 'visitor_vehicle')->count(),
+            AccessLog::whereIn('access_type', ['resident', 'resident_vehicle'])->count(),
+        ];
+
+        // Chart data: hourly distribution for today
+        $hourlyLabels = [];
+        $hourlyData = [];
+        for ($h = 0; $h < 24; $h++) {
+            $hourlyLabels[] = str_pad($h, 2, '0', STR_PAD_LEFT) . ':00';
+            $hourlyData[] = AccessLog::whereDate('entry_time', today())
+                ->whereTime('entry_time', '>=', str_pad($h, 2, '0') . ':00:00')
+                ->whereTime('entry_time', '<', str_pad(($h + 1) % 24, 2, '0') . ':00:00')
+                ->count();
+        }
+
         return view('modules.access.operations', compact(
             'activeEntries', 'todayEntries', 'pendingCorrespondence',
-            'pendingPreAuthorizations', 'peopleInside'
+            'pendingPreAuthorizations', 'totalVisitors', 'totalResidents',
+            'peopleInside', 'recentLogs',
+            'dailyLabels', 'dailyData', 'typeLabels', 'typeData',
+            'hourlyLabels', 'hourlyData'
         ));
     }
 }

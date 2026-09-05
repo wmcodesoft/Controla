@@ -65,7 +65,7 @@ class ReportController extends Controller
         $locData = $topLocations->pluck('total')->toArray();
 
         // Chart data: access type distribution
-        $typeLabels = ['Visitante', 'Vehicular', 'Residente'];
+        $typeLabels = ['Visitante', 'Vehicular', 'Persona'];
         $typeData = [
             AccessLog::where('access_type', 'visitor')->count(),
             AccessLog::where('access_type', 'visitor_vehicle')->count(),

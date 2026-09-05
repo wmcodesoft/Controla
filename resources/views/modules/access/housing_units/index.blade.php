@@ -16,7 +16,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Número</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Piso</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Tipo</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Residentes</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Personas</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Activo</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Acciones</th>
                         </tr>

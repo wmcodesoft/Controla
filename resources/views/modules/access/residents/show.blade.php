@@ -58,15 +58,15 @@
             </div>
 
             <div class="bg-slate-900 rounded-xl border border-slate-800 p-6 mt-6">
-                <h3 class="text-lg font-semibold text-white mb-4">Viviendas</h3>
-                @forelse($resident->housingUnits as $hu)
+                <h3 class="text-lg font-semibold text-white mb-4">Vivienda</h3>
+                @if($resident->structure)
                 <div class="mb-2 p-2 bg-slate-950 rounded">
-                    <p class="text-sm font-medium text-white">{{ $hu->building->name ?? '' }} - {{ $hu->unit_number }}</p>
-                    <p class="text-xs text-slate-400">{{ ucfirst($hu->pivot->relationship_type) }} @if($hu->pivot->is_primary) <span class="text-indigo-400">(Principal)</span> @endif</p>
+                    <p class="text-sm font-medium text-white">{{ $resident->structure->full_path }}</p>
+                    <p class="text-xs text-slate-400">{{ $resident->structure->structureType?->name ?? '' }}</p>
                 </div>
-                @empty
-                <p class="text-sm text-slate-500">Sin viviendas asignadas</p>
-                @endforelse
+                @else
+                <p class="text-sm text-slate-500">Sin vivienda asignada</p>
+                @endif
             </div>
 
             <div class="bg-slate-900 rounded-xl border border-slate-800 p-6 mt-6">

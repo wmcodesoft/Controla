@@ -1,4 +1,15 @@
 <x-client-layout title="Usuarios APP">
+    <x-slot:headerTabs>
+        <a href="{{ route('client.users.index') }}"
+           @class(['admin-header-tab', 'is-active' => request()->routeIs('client.users.*')])>
+            Portal
+        </a>
+        <a href="{{ route('client.app-users.index') }}"
+           @class(['admin-header-tab', 'is-active' => request()->routeIs('client.app-users.*')])>
+            App
+        </a>
+    </x-slot:headerTabs>
+
     <div class="space-y-6">
         <div class="flex justify-between items-center">
             <div>
