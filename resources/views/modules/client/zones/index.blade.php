@@ -1,8 +1,8 @@
-<x-client-layout title="Zonas comunes">
+<x-client-layout title="Reservas">
     <div class="space-y-6">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-bold text-white">Zonas comunes</h2>
+                <h2 class="text-2xl font-bold text-white">Reservas</h2>
                 <p class="text-sm text-slate-400 mt-1">Reserva espacios del conjunto para tu unidad.</p>
             </div>
             <a href="{{ route('client.zones.book') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 transition-colors shadow-sm">

@@ -78,7 +78,7 @@
                     <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-purple-300">Pre-Autorizaciones</p>
+                    <p class="text-sm font-semibold text-white group-hover:text-purple-300">Autorizaciones</p>
                     <p class="text-xs text-slate-500">Autorizaciones anticipadas de ingreso</p>
                 </div>
             </div>
@@ -164,34 +164,6 @@
                 <div>
                     <p class="text-sm font-semibold text-white group-hover:text-violet-300">Zonas</p>
                     <p class="text-xs text-slate-500">Áreas y sectores de vigilancia</p>
-                </div>
-            </div>
-        </a>
-        @endcan
-
-        @can('access.view.audit')
-        <a href="{{ route('access.audit.index') }}" class="group relative bg-slate-900 rounded-xl border border-slate-800 hover:border-stone-600 p-4 transition-all duration-200">
-            <div class="flex items-center space-x-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-stone-800 rounded-lg flex items-center justify-center group-hover:bg-stone-700 transition-colors">
-                    <svg class="w-5 h-5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-stone-300">Auditoría</p>
-                    <p class="text-xs text-slate-500">Traza de acciones del sistema</p>
-                </div>
-            </div>
-        </a>
-        @endcan
-
-        @can('access.view.reports')
-        <a href="{{ route('access.reports.index') }}" class="group relative bg-slate-900 rounded-xl border border-slate-800 hover:border-rose-700 p-4 transition-all duration-200">
-            <div class="flex items-center space-x-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-rose-900/50 rounded-lg flex items-center justify-center group-hover:bg-rose-800/50 transition-colors">
-                    <svg class="w-5 h-5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-white group-hover:text-rose-300">Reportes</p>
-                    <p class="text-xs text-slate-500">Estadísticas e informes del sistema</p>
                 </div>
             </div>
         </a>

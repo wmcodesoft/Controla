@@ -1,4 +1,4 @@
-<x-resident-layout title="Nueva Pre-Autorización">
+<x-resident-layout title="Nueva Autorización">
     <div class="max-w-2xl">
         <h2 class="text-2xl font-bold text-white mb-6">Autorizar visita</h2>
         <form action="{{ route('resident.pre-authorizations.store') }}" method="POST" class="space-y-4 rounded-xl border border-slate-800 bg-slate-900 p-6">

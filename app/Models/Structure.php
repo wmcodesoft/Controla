@@ -61,6 +61,11 @@ final class Structure extends Model
         return $this->hasMany(StructureMember::class);
     }
 
+    public function residents(): HasMany
+    {
+        return $this->hasMany(Resident::class);
+    }
+
     public function pets(): HasMany
     {
         return $this->hasMany(StructurePet::class);

@@ -1,7 +1,7 @@
 <x-client-layout title="Reservar zona">
     <div class="space-y-6 max-w-3xl">
         <div>
-            <a href="{{ route('client.zones.index') }}" class="text-sm text-slate-500 hover:text-white transition-colors">← Zonas comunes</a>
+            <a href="{{ route('client.zones.index') }}" class="text-sm text-slate-500 hover:text-white transition-colors">← Reservas</a>
             <h2 class="text-2xl font-bold text-white mt-1">Reservar zona</h2>
         </div>
 

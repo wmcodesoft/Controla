@@ -60,7 +60,6 @@ class ResidentController extends Controller
     public function edit(Resident $resident)
     {
         $structures = Structure::where('is_active', true)
-            ->with('structureType', 'parent')
             ->orderBy('name')
             ->get();
         $resident->load('structure');

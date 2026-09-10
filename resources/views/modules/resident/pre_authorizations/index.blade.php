@@ -1,7 +1,7 @@
-<x-resident-layout title="Pre-Autorizaciones">
+<x-resident-layout title="Autorizaciones">
     <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-white">Mis Pre-Autorizaciones</h2>
+            <h2 class="text-2xl font-bold text-white">Mis Autorizaciones</h2>
             <a href="{{ route('resident.pre-authorizations.create') }}" class="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-500">Nueva</a>
         </div>
 

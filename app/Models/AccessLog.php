@@ -54,7 +54,7 @@ class AccessLog extends Model
 
     public function host()
     {
-        return $this->belongsTo(User::class, 'host_id');
+        return $this->belongsTo(Resident::class, 'host_id');
     }
 
     public function location()

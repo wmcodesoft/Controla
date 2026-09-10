@@ -2,8 +2,8 @@
     <div class="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-8 bg-gradient-to-r from-slate-800 to-indigo-900 mb-6">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-indigo-300">Pre-Autorizaciones</p>
-                <h2 class="text-xl font-bold text-white">Nueva Pre-Autorización</h2>
+                <p class="text-sm font-medium text-indigo-300">Autorizaciones</p>
+                <h2 class="text-xl font-bold text-white">Nueva Autorización</h2>
             </div>
             <a href="{{ route('access.pre_authorizations.index') }}" class="text-sm text-indigo-300 hover:text-white transition-colors">← Volver</a>
         </div>
@@ -102,7 +102,7 @@
                         <a href="{{ route('access.pre_authorizations.index') }}" class="inline-flex items-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg font-semibold text-xs text-slate-300 hover:bg-slate-700 transition-colors">Cancelar</a>
                         <button type="submit" class="inline-flex items-center px-4 py-2 bg-purple-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 transition-colors shadow-sm">
                             <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                            Crear Pre-Autorización
+                            Crear Autorización
                         </button>
                     </div>
                 </form>

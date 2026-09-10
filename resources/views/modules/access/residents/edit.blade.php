@@ -1,15 +1,14 @@
 <x-access-layout>
-    <div class="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-8 bg-gradient-to-r from-slate-800 to-indigo-900 mb-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                <h2 class="text-xl font-bold text-white">Editar Persona</h2>
-            </div>
+    <div class="rounded-xl bg-gradient-to-r from-slate-800 to-indigo-900 p-5 mb-6 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-indigo-300">Personas</p>
+            <h2 class="text-xl font-bold text-white">Editar Persona</h2>
         </div>
+        <a href="{{ route('access.residents.index') }}" class="text-sm text-indigo-300 hover:text-white transition-colors">← Volver</a>
     </div>
 
     <div class="bg-slate-900 rounded-xl border border-slate-800 p-6">
-        <form method="POST" action="{{ route('access.residents.update', $resident) }}" x-data="residentForm()">
+        <form method="POST" action="{{ route('access.residents.update', $resident) }}">
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -35,7 +34,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300">Fecha Nacimiento</label>
-                    <input type="date" name="birth_date" value="{{ old('birth_date', $resident->birth_date) }}" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                    <input type="date" name="birth_date" value="{{ old('birth_date', $resident->birth_date?->format('Y-m-d')) }}" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300">Tipo Sangre</label>
@@ -69,21 +68,13 @@
 
             <div class="mt-6 pt-4 border-t border-slate-800">
                 <h3 class="text-lg font-semibold text-white mb-3">Asignación de Vivienda</h3>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-slate-300">Seleccionar Apartamento(s)</label>
-                    <select name="housing_units[]" multiple x-model="selectedUnitIds" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" size="5">
-                        <template x-for="unit in housingUnits" :key="unit.id">
-                            <option :value="unit.id" x-text="unit.building_name + ' - ' + unit.unit_number + ' (' + unit.type + ')'"></option>
-                        </template>
-                    </select>
-                </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-300">Vivienda Principal</label>
-                    <select name="primary_unit" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="">Ninguna</option>
-                        <template x-for="unit in selectedUnits" :key="unit.id">
-                            <option :value="unit.id" x-text="unit.building_name + ' - ' + unit.unit_number" :selected="String(unit.id) === primaryUnitId"></option>
-                        </template>
+                    <label class="block text-sm font-medium text-slate-300">Unidad / Estructura</label>
+                    <select name="structure_id" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">Sin asignar</option>
+                        @foreach($structures as $structure)
+                            <option value="{{ $structure->id }}" {{ old('structure_id', $resident->structure_id) == $structure->id ? 'selected' : '' }}>{{ $structure->full_path }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -99,19 +90,4 @@
             </div>
         </form>
     </div>
-
-    @push('scripts')
-    <script>
-        function residentForm() {
-            return {
-                housingUnits: @json($housingUnitsData),
-                selectedUnitIds: @json($residentUnitIds),
-                primaryUnitId: @json($primaryUnitId),
-                get selectedUnits() {
-                    return this.housingUnits.filter(u => this.selectedUnitIds.includes(String(u.id)));
-                }
-            }
-        }
-    </script>
-    @endpush
 </x-access-layout>

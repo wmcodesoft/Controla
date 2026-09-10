@@ -82,6 +82,8 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
         ->name('logs.scan-exit');
     Route::get('/logs/lookup-document', [AccessLogController::class, 'lookupDocument'])
         ->name('logs.lookup-document');
+    Route::post('/logs/create-visitor', [AccessLogController::class, 'createVisitor'])
+        ->name('logs.create-visitor');
 
     // Pre-authorizations
     Route::resource('pre_authorizations', PreAuthorizationController::class)->except(['edit', 'update']);
@@ -155,11 +157,13 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
         ->middleware('permission:access.view.audit')
         ->name('audit.index');
 
-    // Zonas comunes (portería)
+    // Reservas (portería)
     Route::middleware('permission:access.manage.zones')->group(function () {
         Route::get('/zones', [ZoneController::class, 'index'])->name('zones.index');
         Route::get('/zones/create', [ZoneController::class, 'create'])->name('zones.create');
         Route::post('/zones', [ZoneController::class, 'store'])->name('zones.store');
+        Route::get('/zones/{zone}/edit', [ZoneController::class, 'edit'])->name('zones.edit');
+        Route::patch('/zones/{zone}', [ZoneController::class, 'update'])->name('zones.update');
         Route::delete('/zones/{zone}', [ZoneController::class, 'destroy'])->name('zones.destroy');
         Route::post('/zones/checkin', [ZoneController::class, 'checkin'])->name('zones.checkin');
         Route::post('/zones/{booking}/complete', [ZoneController::class, 'complete'])->name('zones.complete');

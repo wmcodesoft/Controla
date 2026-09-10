@@ -58,14 +58,46 @@ class ZoneController extends Controller
 
     public function destroy(CommonZone $zone)
     {
-        $zone->update(['is_active' => false]);
+        $name = $zone->name;
+        $zone->delete();
 
-        app(AuditLogger::class)->record($zone, 'zone.deactivate', null, [
+        return redirect()->route('access.zones.index')
+            ->with('success', "Zona «{$name}» eliminada.");
+    }
+
+    public function edit(CommonZone $zone)
+    {
+        return view('modules.access.zones.edit', compact('zone'));
+    }
+
+    public function update(Request $request, CommonZone $zone)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'type' => 'required|in:salon,piscina,gimnasio,parque,cancha,biblioteca,otro',
+            'capacity' => 'required|integer|min:1|max:500',
+            'requires_approval' => 'boolean',
+            'open_time' => 'required|date_format:H:i',
+            'close_time' => 'required|date_format:H:i|after:open_time',
+            'starts_at' => 'nullable|date',
+            'ends_at' => 'nullable|date|after:starts_at',
+            'is_active' => 'boolean',
+        ]);
+
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['requires_approval'] = $request->boolean('requires_approval');
+
+        $zone->update($validated);
+
+        app(AuditLogger::class)->record($zone, 'zone.update', null, [
             'name' => $zone->name,
+            'type' => $zone->type,
+            'capacity' => $zone->capacity,
         ]);
 
         return redirect()->route('access.zones.index')
-            ->with('success', 'Zona desactivada.');
+            ->with('success', 'Zona actualizada exitosamente.');
     }
 
     public function checkin(Request $request)

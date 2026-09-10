@@ -17,7 +17,7 @@
         <div class="grid md:grid-cols-3 gap-4">
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
                 <p class="text-xs uppercase text-slate-500">Personas</p>
-                <p class="text-2xl font-bold text-white">{{ $structure->members->count() }}</p>
+                <p class="text-2xl font-bold text-white">{{ $structure->residents->count() }}</p>
             </div>
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
                 <p class="text-xs uppercase text-slate-500">Vehículos</p>
@@ -35,13 +35,13 @@
             </div>
             <table class="min-w-full text-sm">
                 <tbody class="divide-y divide-slate-800">
-                    @forelse ($structure->members as $member)
+                    @forelse ($structure->residents as $resident)
                         <tr>
                             <td class="px-4 py-3">
-                                <a href="{{ route('client.members.show', $member) }}" class="text-teal-300 hover:text-teal-200">{{ $member->full_name }}</a>
+                                <a href="{{ route('access.residents.show', $resident) }}" class="text-teal-300 hover:text-teal-200">{{ $resident->full_name }}</a>
                             </td>
-                            <td class="px-4 py-3 text-slate-400">{{ $member->member_type->label() }}</td>
-                            <td class="px-4 py-3 font-mono text-xs text-slate-500">{{ $member->document_number }}</td>
+                            <td class="px-4 py-3 text-slate-400">{{ ucfirst(str_replace('_', ' ', $resident->resident_type)) }}</td>
+                            <td class="px-4 py-3 font-mono text-xs text-slate-500">{{ $resident->document_number }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="3" class="px-4 py-6 text-slate-500">Sin personas registradas.</td></tr>

@@ -10,6 +10,8 @@ use App\Http\Controllers\Client\PetController;
 use App\Http\Controllers\Client\StructureController;
 use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\Client\VehicleController;
+use App\Http\Controllers\Client\LocationController;
+use App\Http\Controllers\Client\BlocklistController;
 use App\Http\Controllers\Client\ZoneBookingController;
 use Illuminate\Support\Facades\Route;
 
@@ -125,5 +127,21 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access', 'clie
             Route::get('/zones/book', [ZoneBookingController::class, 'create'])->name('zones.book');
             Route::post('/zones', [ZoneBookingController::class, 'store'])->name('zones.store');
             Route::post('/zones/{booking}/cancel', [ZoneBookingController::class, 'cancel'])->name('zones.cancel');
+        });
+
+        // Puntos de acceso
+        Route::middleware('permission:client.locations.manage')->group(function () {
+            Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+            Route::get('/locations/create', [LocationController::class, 'create'])->name('locations.create');
+            Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+            Route::get('/locations/{location}/edit', [LocationController::class, 'edit'])->name('locations.edit');
+            Route::put('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
+            Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
+        });
+
+        // Lista de bloqueo
+        Route::middleware('permission:client.blocklist.manage')->group(function () {
+            Route::get('/blocklist', [BlocklistController::class, 'index'])->name('blocklist.index');
+            Route::delete('/blocklist/{blocklist}', [BlocklistController::class, 'destroy'])->name('blocklist.destroy');
         });
     });

@@ -1,15 +1,13 @@
 <x-access-layout>
-    <div class="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-8 bg-gradient-to-r from-slate-800 to-indigo-900 mb-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                <h2 class="text-xl font-bold text-white">Zonas Comunes · Portería</h2>
-            </div>
-            <a href="{{ route('access.zones.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 transition-colors shadow-sm">
-                <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                Nueva Zona
-            </a>
+    <div class="rounded-xl bg-gradient-to-r from-slate-800 to-indigo-900 p-5 mb-6 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-indigo-300">Reservas</p>
+            <h2 class="text-xl font-bold text-white">Gestión de Reservas</h2>
         </div>
+        <a href="{{ route('access.zones.create') }}" class="inline-flex items-center px-3 py-1.5 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm">
+            <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Nueva Zona
+        </a>
     </div>
 
     @if($errors->any())
@@ -107,16 +105,31 @@
                     <div class="mt-3 text-xs text-slate-500">
                         {{ $zone->bookings_count }} reserva(s) de hoy
                     </div>
-                    @if($zone->is_active)
-                        <form method="POST" action="{{ route('access.zones.destroy', $zone) }}" class="mt-4" onsubmit="return confirm('¿Desactivar esta zona?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-xs font-medium text-red-400 hover:text-red-300">Desactivar</button>
-                        </form>
-                    @endif
+                    <div class="mt-4 flex items-center gap-3">
+                        <a href="{{ route('access.zones.edit', $zone) }}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300">Editar</a>
+                        @if($zone->is_active)
+                            <form method="POST" action="{{ route('access.zones.destroy', $zone) }}" onsubmit="return confirm('¿Eliminar esta zona?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs font-medium text-red-400 hover:text-red-300">Eliminar</button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('access.zones.update', $zone) }}" onsubmit="return confirm('¿Reactivar esta zona?');">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="name" value="{{ $zone->name }}">
+                                <input type="hidden" name="type" value="{{ $zone->type }}">
+                                <input type="hidden" name="capacity" value="{{ $zone->capacity }}">
+                                <input type="hidden" name="open_time" value="{{ $zone->open_time?->format('H:i') }}">
+                                <input type="hidden" name="close_time" value="{{ $zone->close_time?->format('H:i') }}">
+                                <input type="hidden" name="is_active" value="1">
+                                <button type="submit" class="text-xs font-medium text-emerald-400 hover:text-emerald-300">Reactivar</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             @empty
-                <div class="md:col-span-2 xl:col-span-3 text-center py-10 text-sm text-slate-500">No hay zonas comunes configuradas todavía.</div>
+                    <div class="md:col-span-2 xl:col-span-3 text-center py-10 text-sm text-slate-500">No hay zonas configuradas todavía.</div>
             @endforelse
         </div>
         <div class="px-6 py-4 border-t border-slate-800">

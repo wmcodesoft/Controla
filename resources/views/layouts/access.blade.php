@@ -28,12 +28,6 @@
                     </a>
                     @endcan
                 @endforeach
-                @can('client.structures.manage')
-                <a href="{{ route('client.dashboard') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 mt-4">
-                    <span>Panel Conjunto</span>
-                </a>
-                @endcan
             </nav>
 <div class="px-4 py-4 border-t border-slate-800 shrink-0">
                 <p class="text-xs text-slate-500 mb-3 truncate">{{ Auth::user()->name }}</p>

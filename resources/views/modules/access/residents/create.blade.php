@@ -1,11 +1,10 @@
 <x-access-layout>
-    <div class="-mt-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-6 pb-8 bg-gradient-to-r from-slate-800 to-indigo-900 mb-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-indigo-300">Control de Acceso</p>
-                <h2 class="text-xl font-bold text-white">Nueva Persona</h2>
-            </div>
+    <div class="rounded-xl bg-gradient-to-r from-slate-800 to-indigo-900 p-5 mb-6 flex items-center justify-between">
+        <div>
+            <p class="text-sm font-medium text-indigo-300">Personas</p>
+            <h2 class="text-xl font-bold text-white">Nueva Persona</h2>
         </div>
+        <a href="{{ route('access.residents.index') }}" class="text-sm text-indigo-300 hover:text-white transition-colors">← Volver</a>
     </div>
 
     <div class="bg-slate-900 rounded-xl border border-slate-800 p-6">
@@ -13,15 +12,6 @@
             scanBuffer: '',
             handleScan() {
                 let parts = this.scanBuffer.trim().split(/[|\t]/);
-                if (parts.length < 5) return;
-                document.getElementById('document_type').value = 'CC';
-                document.getElementById('document_number').value = parts[0];
-                document.getElementById('last_name').value = (parts[1] || '') + ' ' + (parts[2] || '');
-                document.getElementById('first_name').value = (parts[3] || '') + ' ' + (parts[4] || '');
-                this.scanBuffer = '';
-            }
-        }">
-            @csrf
                 if (parts.length < 5) return;
                 let numero = parts[0], apellido1 = parts[1] || '', apellido2 = parts[2] || '';
                 let nombre1 = parts[3] || '', nombre2 = parts[4] || '';

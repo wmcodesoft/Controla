@@ -38,7 +38,7 @@ class AccessLogController extends Controller
     public function entry()
     {
         $locations = Location::where('is_active', true)->get();
-        $hosts = User::role('anfitrion')->get();
+        $hosts = Resident::whereNull('deleted_at')->orderBy('first_name')->get();
         $structures = Structure::where('is_active', true)
             ->with('structureType')
             ->orderBy('name')
@@ -59,7 +59,7 @@ class AccessLogController extends Controller
             'person_id' => 'required|integer',
             'structure_id' => 'nullable|exists:structures,id',
             'vehicle_id' => 'nullable|exists:vehicles,id',
-            'host_id' => 'required|exists:users,id',
+            'host_id' => 'nullable|exists:residents,id',
             'location_id' => 'required|exists:locations,id',
             'access_type' => 'required|in:visitor,visitor_vehicle,resident,resident_vehicle',
             'purpose' => 'nullable|string|max:255',
@@ -86,6 +86,9 @@ class AccessLogController extends Controller
             $validated['resident_id'] = $resident->id;
             if (! isset($validated['structure_id'])) {
                 $validated['structure_id'] = $resident->structure_id;
+            }
+            if (empty($validated['host_id'])) {
+                $validated['host_id'] = $resident->id;
             }
         }
 
@@ -298,6 +301,10 @@ class AccessLogController extends Controller
             ->first();
 
         if ($visitor) {
+            $lastLog = AccessLog::where('visitor_id', $visitor->id)
+                ->latest('entry_time')
+                ->first();
+
             return response()->json([
                 'found' => true,
                 'type' => 'visitor',
@@ -308,24 +315,49 @@ class AccessLogController extends Controller
                     'first_name' => $visitor->first_name,
                     'last_name' => $visitor->last_name,
                     'full_name' => $visitor->full_name,
+                    'phone' => $visitor->phone,
                 ],
+                'last_visit' => $lastLog ? [
+                    'purpose' => $lastLog->purpose,
+                    'company_visited' => $lastLog->company_visited,
+                    'host_id' => $lastLog->host_id,
+                    'structure_id' => $lastLog->structure_id,
+                    'vehicle_id' => $lastLog->vehicle_id,
+                ] : null,
             ]);
         }
 
-        // 3. Auto-create as visitor
+        // 3. Unknown — return status for front-end to handle
+        return response()->json([
+            'found' => false,
+            'status' => 'unknown',
+            'document_number' => $doc,
+        ]);
+    }
+
+    public function createVisitor(Request $request)
+    {
+        $validated = $request->validate([
+            'document_number' => 'required|string|max:50',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $clientId = (int) app(\App\Support\Tenancy\TenantContext::class)->clientId();
+
         $visitor = Visitor::create([
             'client_id' => $clientId,
             'document_type' => 'CC',
-            'document_number' => $doc,
-            'first_name' => $doc,
-            'last_name' => '',
+            'document_number' => $validated['document_number'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'] ?? '',
+            'phone' => $validated['phone'] ?? null,
             'visitor_type' => 'occasional',
         ]);
 
         return response()->json([
-            'found' => true,
-            'type' => 'visitor',
-            'auto_created' => true,
+            'ok' => true,
             'person' => [
                 'id' => $visitor->id,
                 'document_type' => $visitor->document_type,

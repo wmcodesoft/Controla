@@ -8,7 +8,7 @@
             <div class="flex gap-2">
                 <a href="{{ route('resident.pre-authorizations.create') }}" class="rounded-lg bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-500">
                     <svg class="w-3.5 h-3.5 inline mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                    Nueva Pre-Autorización
+                    Nueva Autorización
                 </a>
                 <a href="{{ route('resident.messages.create') }}" class="rounded-lg bg-slate-700 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-600">
                     <svg class="w-3.5 h-3.5 inline mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -35,7 +35,7 @@
             <div class="rounded-xl border border-slate-800 bg-slate-900 p-4">
                 <div class="flex items-center gap-2 text-slate-500 text-xs uppercase mb-1">
                     <svg class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Pre-Autorizaciones activas
+                    Autorizaciones activas
                 </div>
                 <p class="text-2xl font-bold text-white mt-1">{{ $activePreAuths }}</p>
             </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="h-px bg-slate-800"></div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-slate-400">Pre-Autorizaciones activas</span>
+                        <span class="text-slate-400">Autorizaciones activas</span>
                         <span class="text-white font-bold">{{ $activePreAuths }}</span>
                     </div>
                     <div class="h-px bg-slate-800"></div>
@@ -82,7 +82,7 @@
         <div class="grid lg:grid-cols-2 gap-6">
             <div class="rounded-xl border border-slate-800 overflow-hidden">
                 <div class="px-4 py-3 bg-slate-950/60 border-b border-slate-800 flex justify-between items-center">
-                    <h3 class="text-sm font-semibold text-white">Últimas Pre-Autorizaciones</h3>
+                    <h3 class="text-sm font-semibold text-white">Últimas Autorizaciones</h3>
                     <a href="{{ route('resident.pre-authorizations.index') }}" class="text-xs text-teal-400 hover:text-teal-300">Ver todas</a>
                 </div>
                 <table class="min-w-full text-sm">
