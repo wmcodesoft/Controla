@@ -17,6 +17,16 @@ class AccessLogController extends Controller
 {
     public function index()
     {
+        $todayLogs = AccessLog::with(['visitor', 'resident', 'structure', 'host', 'location'])
+            ->whereDate('entry_time', today())
+            ->latest('entry_time')
+            ->paginate(20);
+
+        return view('modules.access.logs.index', compact('todayLogs'));
+    }
+
+    public function active()
+    {
         $activeLogs = AccessLog::with(['visitor', 'resident', 'structure', 'host', 'location', 'vehicle'])
             ->where('status', 'active')
             ->latest('entry_time')
@@ -27,12 +37,7 @@ class AccessLogController extends Controller
                 return $log;
             });
 
-        $todayLogs = AccessLog::with(['visitor', 'resident', 'structure', 'host', 'location'])
-            ->whereDate('entry_time', today())
-            ->latest('entry_time')
-            ->paginate(20);
-
-        return view('modules.access.logs.index', compact('activeLogs', 'todayLogs'));
+        return view('modules.access.logs.active', compact('activeLogs'));
     }
 
     public function historical(Request $request)
