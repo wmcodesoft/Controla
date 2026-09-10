@@ -35,6 +35,40 @@ class AccessLogController extends Controller
         return view('modules.access.logs.index', compact('activeLogs', 'todayLogs'));
     }
 
+    public function historical(Request $request)
+    {
+        $query = AccessLog::with(['visitor', 'resident', 'structure', 'host', 'location', 'vehicle'])
+            ->latest('entry_time');
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('entry_time', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('entry_time', '<=', $request->date_to);
+        }
+        if ($request->filled('person_type')) {
+            if ($request->person_type === 'resident') {
+                $query->whereNotNull('resident_id');
+            } elseif ($request->person_type === 'visitor') {
+                $query->whereNotNull('visitor_id');
+            }
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('resident', fn ($r) => $r->where('first_name', 'like', "%{$search}%")->orWhere('last_name', 'like', "%{$search}%")->orWhere('document_number', 'like', "%{$search}%"))
+                  ->orWhereHas('visitor', fn ($v) => $v->where('first_name', 'like', "%{$search}%")->orWhere('last_name', 'like', "%{$search}%")->orWhere('document_number', 'like', "%{$search}%"));
+            });
+        }
+
+        $logs = $query->paginate(25)->withQueryString();
+
+        return view('modules.access.logs.historical', compact('logs'));
+    }
+
     public function entry()
     {
         $locations = Location::where('is_active', true)->get();

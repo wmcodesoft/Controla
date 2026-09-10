@@ -65,6 +65,9 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
     Route::get('/logs', [AccessLogController::class, 'index'])
         ->middleware('shift.open')
         ->name('logs.index');
+    Route::get('/logs/historical', [AccessLogController::class, 'historical'])
+        ->middleware('shift.open')
+        ->name('logs.historical');
     Route::get('/logs/entry', [AccessLogController::class, 'entry'])
         ->middleware('shift.open')
         ->name('logs.entry');

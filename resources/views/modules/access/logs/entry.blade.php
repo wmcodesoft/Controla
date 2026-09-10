@@ -36,9 +36,10 @@
 
                     <form method="POST" action="{{ route('access.logs.entry.store') }}" x-ref="mainForm" @submit="submitting = true">
                         @csrf
-                        <input type="hidden" name="access_type" x-model="computedAccessType">
-                        <input type="hidden" name="person_type" x-model="personType">
-                        <input type="hidden" name="person_id" x-model="personId">
+                        <input type="hidden" name="access_type" :value="computedAccessType">
+                        <input type="hidden" name="person_type" :value="personType">
+                        <input type="hidden" name="person_id" :value="personId">
+                        <input type="hidden" name="document_number" :value="documentNumber">
 
                         {{-- ── BLOQUE 1: DOCUMENTO ── --}}
                         <div class="bg-slate-800 rounded-xl p-4 mb-6">

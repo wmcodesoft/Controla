@@ -23,6 +23,18 @@
         </div>
     </div>
 
+    {{-- Tabs --}}
+    <div class="flex gap-1 mb-6 bg-slate-900 rounded-xl border border-slate-800 p-1 w-fit">
+        <a href="{{ route('access.logs.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors bg-indigo-600 text-white">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Registros del día
+        </a>
+        <a href="{{ route('access.logs.historical') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-slate-400 hover:text-white hover:bg-slate-800">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Histórico
+        </a>
+    </div>
+
     <div x-data="exitModal()">
         @if(session('success'))
         <div class="mt-6 rounded-lg bg-emerald-900/40 border border-emerald-700 text-emerald-200 px-4 py-3 text-sm flex items-center gap-2">
