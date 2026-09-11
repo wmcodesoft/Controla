@@ -12,24 +12,34 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        $vehicles = Vehicle::with(['visitor', 'owner', 'resident'])
-            ->whereNotNull('resident_id')
-            ->latest()
-            ->paginate(15);
-
-        $activeLogs = AccessLog::with(['vehicle', 'resident', 'visitor', 'location'])
-            ->whereIn('access_type', ['visitor_vehicle', 'resident_vehicle'])
-            ->where('status', 'active')
-            ->latest('entry_time')
-            ->get();
-
         $todayLogs = AccessLog::with(['vehicle', 'resident', 'visitor', 'location'])
             ->whereIn('access_type', ['visitor_vehicle', 'resident_vehicle'])
             ->whereDate('entry_time', today())
             ->latest('entry_time')
             ->paginate(20);
 
-        return view('modules.access.vehicles.index', compact('vehicles', 'activeLogs', 'todayLogs'));
+        return view('modules.access.vehicles.index', compact('todayLogs'));
+    }
+
+    public function active()
+    {
+        $activeLogs = AccessLog::with(['vehicle', 'resident', 'visitor', 'location'])
+            ->whereIn('access_type', ['visitor_vehicle', 'resident_vehicle'])
+            ->where('status', 'active')
+            ->latest('entry_time')
+            ->get();
+
+        return view('modules.access.vehicles.active', compact('activeLogs'));
+    }
+
+    public function list()
+    {
+        $vehicles = Vehicle::with(['visitor', 'owner', 'resident'])
+            ->whereNotNull('resident_id')
+            ->latest()
+            ->paginate(15);
+
+        return view('modules.access.vehicles.list', compact('vehicles'));
     }
 
     public function create()

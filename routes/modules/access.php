@@ -45,6 +45,8 @@ Route::middleware(['auth', 'password.changed', 'active', 'tenancy.access'])->pre
 
     // Vehicles
     Route::resource('vehicles', VehicleController::class)->except(['show']);
+    Route::get('vehicles/active', [VehicleController::class, 'active'])->name('vehicles.active');
+    Route::get('vehicles/list', [VehicleController::class, 'list'])->name('vehicles.list');
     Route::get('vehicles/search/json', [VehicleController::class, 'searchJson'])->name('vehicles.search.json');
     Route::get('vehicles/search/resident/json', [VehicleController::class, 'searchResidentVehicleJson'])->name('vehicles.search.resident.json');
     Route::post('vehicles/visitor-vehicle', [VehicleController::class, 'storeVisitorVehicle'])->name('vehicles.visitor-vehicle');
