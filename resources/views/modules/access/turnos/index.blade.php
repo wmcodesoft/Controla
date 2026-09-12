@@ -6,11 +6,7 @@
                 <h2 class="text-xl font-bold text-white">Mis Turnos</h2>
             </div>
             @if($currentShift)
-                <form method="POST" action="{{ route('access.turnos.close') }}" onsubmit="return confirm('¿Cerrar el turno actual?');">
-                    @csrf
-                    <input type="hidden" name="end_notes" value="">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-sm">Cerrar Turno</button>
-                </form>
+                <button type="button" onclick="document.getElementById('closeModal').classList.remove('hidden')" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-sm">Cerrar Turno</button>
             @else
                 <a href="{{ route('access.turnos.open') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-sm">Abrir Turno</a>
             @endif
@@ -53,13 +49,14 @@
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-800">
-                        <th class="px-6 py-3">Inicio</th>
-                        <th class="px-6 py-3">Fin</th>
-                        <th class="px-6 py-3">Duración</th>
-                        <th class="px-6 py-3">Ubicación</th>
-                        <th class="px-6 py-3">Nota de cierre</th>
-                    </tr>
+                        <tr class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-800">
+                            <th class="px-6 py-3">Inicio</th>
+                            <th class="px-6 py-3">Fin</th>
+                            <th class="px-6 py-3">Duración</th>
+                            <th class="px-6 py-3">Ubicación</th>
+                            <th class="px-6 py-3">Nota Apertura</th>
+                            <th class="px-6 py-3">Nota Cierre</th>
+                        </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800/70">
                     @forelse($history as $shift)
@@ -73,12 +70,13 @@
                                     <span class="text-emerald-400 font-medium">En curso</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-3 text-slate-300">{{ $shift->location?->name ?? 'No especificada' }}</td>
-                            <td class="px-6 py-3 text-slate-400 max-w-xs truncate">{{ $shift->end_notes ?? ($shift->start_notes ?? '—') }}</td>
+                            <td class="px-6 py-3 text-slate-400">{{ $shift->location?->name ?? 'No especificada' }}</td>
+                            <td class="px-6 py-3 text-slate-400 max-w-xs truncate">{{ $shift->start_notes ?? '—' }}</td>
+                            <td class="px-6 py-3 text-slate-400 max-w-xs truncate">{{ $shift->end_notes ?? '—' }}</td>
                         </tr>
-                    @empty
+                        @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-8 text-center text-sm text-slate-500">Sin turnos registrados.</td>
+                            <td colspan="6" class="px-6 py-8 text-center text-sm text-slate-500">Sin turnos registrados.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -88,4 +86,31 @@
             {{ $history->links() }}
         </div>
     </div>
+
+    @if($currentShift)
+    <div id="closeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-slate-900 rounded-xl border border-slate-700 shadow-2xl w-full max-w-md mx-4 p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-amber-900/60 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-white">Cerrar Turno</h3>
+                    <p class="text-xs text-slate-400">Turno activo desde {{ $currentShift->started_at->format('H:i') }}</p>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('access.turnos.close') }}">
+                @csrf
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-300">Nota de cierre</label>
+                    <textarea name="end_notes" rows="3" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-amber-500 focus:ring-amber-500" placeholder="Observaciones al cerrar el turno..."></textarea>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('closeModal').classList.add('hidden')" class="inline-flex items-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg font-semibold text-xs text-slate-300 hover:bg-slate-700 transition-colors">Cancelar</button>
+                    <button type="submit" onclick="return confirm('¿Cerrar el turno actual?')" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-sm">Cerrar Turno</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
 </x-access-layout>

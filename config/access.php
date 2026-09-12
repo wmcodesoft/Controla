@@ -261,7 +261,6 @@ return [
                 ['label' => 'Autorizaciones', 'route' => 'access.pre_authorizations.index', 'permission' => 'access.manage.pre_authorizations'],
                 ['label' => 'Correspondencia', 'route' => 'access.correspondence.index', 'permission' => 'access.manage.correspondence'],
                 ['label' => 'Minutas', 'route' => 'access.guard_logs.index', 'permission' => 'access.manage.guard_logs'],
-                ['label' => 'Turnos', 'route' => 'access.turnos.index', 'permission' => 'access.manage.turnos'],
                 ['label' => 'Puntos de acceso', 'route' => 'access.locations.index', 'permission' => 'access.manage.locations'],
                 ['label' => 'Lista Bloqueo', 'route' => 'access.blocklist.index', 'permission' => 'access.manage.blocklist'],
                 ['label' => 'Reservas', 'route' => 'access.zones.index', 'permission' => 'access.manage.zones'],

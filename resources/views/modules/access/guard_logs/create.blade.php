@@ -9,104 +9,72 @@
         </div>
     </div>
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8" x-data="minutaForm()">
+        @php($locations = $locations ?? collect())
+        @php($firstLocation = $locations->first())
+        @php($isNight = now()->hour < 6 || now()->hour >= 18)
         <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-800">
                 <h3 class="text-lg font-semibold text-white">Registrar Novedad</h3>
-                <p class="text-sm text-slate-500 mt-0.5">Complete los campos para registrar una nueva minuta de vigilancia</p>
+                <p class="text-sm text-slate-500 mt-0.5">Complete la descripción y confirme el registro</p>
             </div>
-            <div class="px-6 py-5" x-data="geoCapture({{ in_array(old('type', 'general'), ['incidente', 'novedad', 'revista'], true) ? 'true' : 'false' }})">
+            <div class="px-6 py-5">
                 <form method="POST" action="{{ route('access.guard_logs.store') }}">
                     @csrf
 
                     @if($errors->any())
-                        <div class="mb-5 rounded-lg bg-red-900/40 border border-red-700 text-red-200 px-4 py-3 text-sm">
-                            @foreach($errors->all() as $error)
-                                <p>{{ $error }}</p>
-                            @endforeach
-                        </div>
+                    <div class="mb-5 rounded-lg bg-red-900/40 border border-red-700 text-red-200 px-4 py-3 text-sm">
+                        @foreach($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
                     @endif
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="mb-5 flex items-center gap-3 bg-indigo-900/40 border border-indigo-700 rounded-lg p-4">
+                        <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold flex-shrink-0">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-300">Ubicación</label>
-                            <select name="location_id" required class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
-                                @foreach($locations as $loc)
-                                <option value="{{ $loc->id }}">{{ $loc->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300">Fecha/Hora</label>
-                            <input type="datetime-local" name="log_time" value="{{ old('log_time', date('Y-m-d\TH:i')) }}" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300">Tipo</label>
-                            <select name="type" x-on:change="requiresSupervisor = ['incidente','novedad','revista'].includes($event.target.value)" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="general" @selected(old('type') === 'general')>📋 General</option>
-                                <option value="novedad" @selected(old('type') === 'novedad')>🔶 Novedad</option>
-                                <option value="revista" @selected(old('type') === 'revista')>✅ Revista de puesto</option>
-                                <option value="turno" @selected(old('type') === 'turno')>🔄 Cambio de Turno</option>
-                                <option value="incidente" @selected(old('type') === 'incidente')>🚨 Incidente</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300">Turno</label>
-                            <select name="shift_type" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="diurno">☀️ Diurno</option>
-                                <option value="nocturno">🌙 Nocturno</option>
-                            </select>
+                            <p class="text-xs font-medium text-indigo-300 uppercase tracking-wider">Guardia</p>
+                            <p class="text-sm font-semibold text-white">{{ auth()->user()->name }}</p>
                         </div>
                     </div>
 
-                    <div class="mt-5 bg-slate-950 rounded-lg p-4 border border-slate-700">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                <span class="text-sm font-medium text-slate-300">Geolocalización</span>
-                            </div>
-                            <button @click="capture()" type="button" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-900/40 rounded-lg hover:bg-indigo-800/60 transition-colors" x-text="captured ? 'Capturada' : 'Capturar ubicación'"></button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                        <div class="bg-slate-950 rounded-lg p-3 border border-slate-700">
+                            <p class="text-xs text-slate-500 mb-1">Ubicación</p>
+                            <p class="text-sm font-medium text-white">{{ $firstLocation->name ?? '—' }}</p>
                         </div>
-                        <div class="mt-2 text-xs text-slate-500" x-show="!captured && !error && !loading">
-                            La ubicación se usará para verificar la presencia del guardia en el sitio.
+                        <div class="bg-slate-950 rounded-lg p-3 border border-slate-700">
+                            <p class="text-xs text-slate-500 mb-1">Fecha / Hora</p>
+                            <p class="text-sm font-medium text-white">{{ now()->format('d/m/Y H:i') }}</p>
                         </div>
-                        <div class="mt-2 text-xs text-emerald-400" x-show="captured" x-cloak>
-                            <span class="font-medium">✓ Ubicación capturada:</span>
-                            <span x-text="`${lat}, ${lng}`"></span>
+                        <div class="bg-slate-950 rounded-lg p-3 border border-slate-700">
+                            <p class="text-xs text-slate-500 mb-1">Tipo</p>
+                            <p class="text-sm font-medium text-white">General</p>
                         </div>
-                        <div class="mt-2 text-xs text-red-400" x-show="error" x-cloak x-text="error"></div>
-                        <div class="mt-2 text-xs text-slate-500" x-show="loading" x-cloak>Obteniendo ubicación...</div>
-                        <input type="hidden" name="latitude" x-model="lat">
-                        <input type="hidden" name="longitude" x-model="lng">
+                        <div class="bg-slate-950 rounded-lg p-3 border border-slate-700">
+                            <p class="text-xs text-slate-500 mb-1">Turno</p>
+                            <p class="text-sm font-medium text-white">{{ $isNight ? 'Nocturno' : 'Diurno' }}</p>
+                        </div>
                     </div>
 
-                    <div class="mt-5">
+                    <input type="hidden" name="location_id" value="{{ $firstLocation->id }}">
+                    <input type="hidden" name="log_time" value="{{ now()->format('Y-m-d\TH:i') }}">
+                    <input type="hidden" name="type" value="general">
+                    <input type="hidden" name="shift_type" value="{{ $isNight ? 'nocturno' : 'diurno' }}">
+                    <input type="hidden" name="latitude" :value="geoLat">
+                    <input type="hidden" name="longitude" :value="geoLng">
+
+                    <div class="mb-5">
                         <label class="block text-sm font-medium text-slate-300">Descripción</label>
                         <textarea name="description" rows="4" class="mt-1 block w-full rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500" placeholder="Describa la novedad, incidente o novedad ocurrida durante el turno..." required>{{ old('description') }}</textarea>
                     </div>
 
-                    <div class="mt-5">
-                        <label class="flex items-start gap-3 cursor-pointer">
-                            <input type="checkbox" x-model="requiresSupervisor" name="requires_supervisor" value="1" class="mt-0.5 rounded bg-slate-950 border-indigo-600 text-indigo-500 focus:ring-indigo-500">
-                            <div>
-                                <p class="text-sm font-medium text-indigo-200">Requiere firma de supervisor</p>
-                                <p class="text-xs text-slate-400">Para revistas, novedades e incidentes el supervisor valida con su código (catálogo o código de 6 dígitos del usuario supervisor).</p>
-                            </div>
-                        </label>
-
-                        <div x-show="requiresSupervisor" x-cloak class="mt-3 p-4 bg-indigo-950/40 rounded-lg border border-indigo-700/60">
-                            <label class="block text-sm font-medium text-slate-300">Código del supervisor</label>
-                            <input type="text" name="supervision_code" x-model="supervisorCode" autocomplete="off" placeholder="Ingrese el código único del supervisor..." class="mt-1 block w-full max-w-xs rounded-lg bg-slate-950 border-slate-700 text-white focus:border-indigo-500 focus:ring-indigo-500">
-                            <p class="mt-2 text-xs text-slate-500">El sistema validará el código contra los códigos de supervisión activos y registrará quién firmó la minuta.</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 bg-amber-900/30 rounded-lg p-4 border border-amber-700">
+                    <div class="bg-amber-900/30 rounded-lg p-4 border border-amber-700">
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" name="signed" value="1" class="mt-0.5 rounded bg-slate-950 border-amber-600 text-amber-500 focus:ring-amber-500" required>
                             <div>
                                 <p class="text-sm font-medium text-amber-200">Confirmo que la información registrada es verídica</p>
-                                <p class="text-xs text-amber-400">Firma digital — doble factor de autenticación. Al marcar, el sistema registrará su identidad y hora de confirmación.</p>
+                                <p class="text-xs text-amber-400">Firma digital — el sistema registrará su identidad y hora de confirmación.</p>
                             </div>
                         </label>
                     </div>
@@ -120,53 +88,38 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
 
 @push('scripts')
 <script>
-    function geoCapture(requiresSupervisor = false) {
+    function minutaForm() {
         return {
-            requiresSupervisor,
-            supervisorCode: '{{ old('supervision_code') }}',
-            lat: '{{ old('latitude') }}',
-            lng: '{{ old('longitude') }}',
-            captured: !!'{{ old('latitude') }}',
-            loading: false,
-            error: '',
-            capture() {
-                if (!navigator.geolocation) {
-                    this.error = 'Geolocalización no disponible en este navegador.';
-                    return;
+            geoLat: '',
+            geoLng: '',
+            geoCaptured: false,
+            geoError: '',
+            init() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            this.geoLat = pos.coords.latitude.toFixed(7);
+                            this.geoLng = pos.coords.longitude.toFixed(7);
+                            this.geoCaptured = true;
+                        },
+                        (err) => {
+                            switch(err.code) {
+                                case err.PERMISSION_DENIED: this.geoError = 'Permiso denegado. Active la ubicación.'; break;
+                                case err.POSITION_UNAVAILABLE: this.geoError = 'Ubicación no disponible.'; break;
+                                case err.TIMEOUT: this.geoError = 'Tiempo de espera agotado.'; break;
+                            }
+                        },
+                        { enableHighAccuracy: true, timeout: 10000 }
+                    );
                 }
-                this.loading = true;
-                this.error = '';
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        this.lat = pos.coords.latitude.toFixed(7);
-                        this.lng = pos.coords.longitude.toFixed(7);
-                        this.captured = true;
-                        this.loading = false;
-                    },
-                    (err) => {
-                        this.loading = false;
-                        switch(err.code) {
-                            case err.PERMISSION_DENIED:
-                                this.error = 'Permiso denegado. Active la ubicación en su navegador.';
-                                break;
-                            case err.POSITION_UNAVAILABLE:
-                                this.error = 'Ubicación no disponible.';
-                                break;
-                            case err.TIMEOUT:
-                                this.error = 'Tiempo de espera agotado.';
-                                break;
-                        }
-                    },
-                    { enableHighAccuracy: true, timeout: 10000 }
-                );
             }
         }
     }
 </script>
 @endpush
-        </div>
-    </div>
 </x-access-layout>

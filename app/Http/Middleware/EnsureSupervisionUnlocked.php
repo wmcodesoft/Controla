@@ -18,10 +18,6 @@ final class EnsureSupervisionUnlocked
             return redirect()->route('login');
         }
 
-        if ($user->isSupervisionManager()) {
-            return $next($request);
-        }
-
         if ($request->session()->get('supervision.authorized')) {
             return $next($request);
         }

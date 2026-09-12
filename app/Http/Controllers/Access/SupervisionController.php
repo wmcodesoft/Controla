@@ -101,8 +101,6 @@ class SupervisionController extends Controller
             'latitude' => [$geoRequired ? 'required' : 'nullable', 'numeric', 'between:-90,90'],
             'longitude' => [$geoRequired ? 'required' : 'nullable', 'numeric', 'between:-180,180'],
             'signed' => 'accepted',
-            'photos.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:10240',
-            'documents.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,webp|max:20480',
         ]);
 
         $location = Location::find($validated['location_id']);
@@ -132,9 +130,6 @@ class SupervisionController extends Controller
             'supervision_code_id' => session('supervision.supervisor_code_id'),
             'supervisor_name' => $validated['supervisor_name'] ?: session('supervision.supervisor_name'),
         ]);
-
-        $this->storeAttachments($supervision, $request, 'photos', 'photo');
-        $this->storeAttachments($supervision, $request, 'documents', 'document');
 
         app(AuditLogger::class)->record($supervision, 'supervision.create', null, [
             'type' => $supervision->type,
